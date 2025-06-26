@@ -1,0 +1,45 @@
+{
+  "name": "authentique",
+  "version": "1.0.0",
+  "description": "Framework-agnostic authentication stack with adapters for multiple databases and social providers",
+  "type": "module",
+  "scripts": {
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
+    "test:watch": "npm test -- --watch",
+    "lint": "eslint .",
+    "start": "node examples/server.js",
+    "dev": "nodemon examples/server.js",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "nanoid": "^5.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2"
+  },
+  "peerDependencies": {
+    "mongodb": "^6.0.0",
+    "mysql2": "^3.9.0",
+    "sqlite3": "^5.1.7",
+    "@supabase/supabase-js": "^2.39.8"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "authentication",
+    "auth",
+    "jwt",
+    "oauth",
+    "password-hashing",
+    "database-adapters"
+  ],
+  "license": "MIT",
+  "files": [
+    "lib/**/*"
+  ]
+}
