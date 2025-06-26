@@ -1,4 +1,4 @@
-mcsr-auth/
+authentique/
 ├── lib/
 │   ├── core/
 │   │   ├── auth-service.js          # Core auth logic

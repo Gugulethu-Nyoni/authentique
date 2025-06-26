@@ -1,0 +1,51 @@
+/* Core Variables */
+:root {
+  --primary: #3b82f6;
+  --error: #ef4444;
+  --success: #10b981;
+  --text: #1f2937;
+  --bg: #f9fafb;
+}
+
+/* Layout */
+.auth-container {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: var(--bg);
+  font-family: system-ui, sans-serif;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Forms */
+.auth-form input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+}
+
+.auth-form button {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
+
+/* Utilities */
+.text-error { color: var(--error); }
+.text-success { color: var(--success); }
+.hidden { display: none; }
