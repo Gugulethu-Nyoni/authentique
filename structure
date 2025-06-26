@@ -1,0 +1,37 @@
+mcsr-auth/
+├── lib/
+│   ├── core/
+│   │   ├── auth-service.js          # Core auth logic
+│   │   ├── token-service.js         # JWT handling
+│   │   ├── password-service.js      # Password hashing
+│   │   └── social-auth-service.js   # Social auth orchestration
+│   ├── adapters/
+│   │   ├── databases/               # Existing database adapters
+│   │   ├── email/                   # Existing email adapters
+│   │   └── oauth/
+│   │       ├── github-adapter.js
+│   │       ├── google-adapter.js
+│   │       ├── facebook-adapter.js
+│   │       ├── twitter-adapter.js
+│   │       ├── oauth-base.js        # Shared OAuth logic
+│   │       └── mock-adapter.js      # For testing
+│   ├── models/
+│   │   ├── user-model.js            # Base user schema
+│   │   └── social-profile-model.js  # Social auth profiles
+│   ├── strategies/                  # Optional passport.js strategies
+│   │   ├── github-strategy.js
+│   │   └── google-strategy.js
+│   ├── utils/
+│   │   ├── oauth-state-manager.js   # Secure state handling
+│   │   └── ...                     # Existing utils
+│   └── index.js                     # Main export
+├── examples/
+│   ├── social-auth/                 # New social examples
+│   │   ├── github-flow/
+│   │   ├── google-flow/
+│   │   └── multi-provider/
+│   └── ...                         # Existing examples
+├── tests/
+│   ├── social-auth/                 # Social auth tests
+│   └── ...                         # Existing tests
+└── package.json
