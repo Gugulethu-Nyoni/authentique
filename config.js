@@ -3,12 +3,19 @@ dotenv.config();
 
 const isProd = process.env.NODE_ENV === 'production';
 
+console.log('RESEND_API_KEY:', process.env.RESEND_API_KEY);
+
+
 export const config = {
   // Core
   env: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT || '3000'),
-  baseUrl: process.env.BASE_URL || (isProd ? 'https://api.botaniq.com' : 'http://localhost:3000'),
+  baseUrl: process.env.BASE_URL || (isProd ? 'https://api.botaniqsa.com' : 'http://localhost:3000'),
 
+brand: {
+    name: process.env.BRAND_NAME || 'Botaniq',
+    supportEmail: process.env.BRAND_SUPPORT_EMAIL || 'support@botaniqsa.com'
+  },
   // Database
   db: {
     adapter: process.env.DB_ADAPTER || 'mysql',
@@ -44,7 +51,7 @@ export const config = {
   // Email (unchanged)
   email: {
     driver: process.env.EMAIL_DRIVER || 'resend',
-    from: process.env.EMAIL_FROM || (isProd ? 'noreply@botaniq.com' : 'dev@localhost'),
+    from: process.env.EMAIL_FROM || (isProd ? 'noreply@sender.formiquejs.com' : 'dev@localhost'),
     fromName: process.env.EMAIL_FROM_NAME || 'BOTANIQ Auth',
     resend: {
       apiKey: process.env.RESEND_API_KEY
