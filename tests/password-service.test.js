@@ -1,42 +1,31 @@
 import PasswordService from '../lib/core/password-service.js';
-import assert from 'node:assert/strict';
+import { describe, it, expect } from '@jest/globals';
 
-const passwordService = new PasswordService();
+describe('PasswordService', () => {
+  const passwordService = new PasswordService();
 
-async function runTests() {
-  // Test hashing and comparison
-  const plain = "SecurePass123!";
-  const hash = await passwordService.hashPassword(plain);
-  assert.equal(
-    await passwordService.comparePassword(plain, hash),
-    true,
-    'Password comparison should succeed'
-  );
+  it('should hash and compare passwords correctly', async () => {
+    const plain = "SecurePass123!";
+    const hash = await passwordService.hashPassword(plain);
+    
+    // Test correct password
+    expect(await passwordService.comparePassword(plain, hash)).toBe(true);
+    
+    // Test incorrect password
+    expect(await passwordService.comparePassword('wrong', hash)).toBe(false);
+  });
 
-  // Test invalid comparison
-  assert.equal(
-    await passwordService.comparePassword('wrong', hash),
-    false,
-    'Invalid password should fail'
-  );
+  it('should enforce password requirements', () => {
+    // Test weak password
+    expect(passwordService.meetsRequirements("Weak")).toBe(false);
+    
+    // Test strong password
+    expect(passwordService.meetsRequirements("StrongPass123!")).toBe(true);
+  });
 
-  // Test requirements
-  assert.equal(
-    passwordService.meetsRequirements("Weak"),
-    false,
-    'Weak password should fail'
-  );
-  
-  assert.equal(
-    passwordService.meetsRequirements("StrongPass123!"),
-    true,
-    'Strong password should pass'
-  );
-
-  console.log("All password service tests passed!");
-}
-
-runTests().catch(err => {
-  console.error("Tests failed:", err);
-  process.exit(1);
+  it('should reject empty passwords', async () => {
+    await expect(passwordService.hashPassword(''))
+      .rejects
+      .toThrow('Password cannot be empty');
+  });
 });
