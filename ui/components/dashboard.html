@@ -23,7 +23,7 @@
       try {
         const response = await fetch('/api/dashboard', {
           headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
           }
         });
         
