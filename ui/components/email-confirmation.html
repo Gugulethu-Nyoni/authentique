@@ -109,29 +109,38 @@
       errorActions.classList.remove('hidden');
     }
 
-    function verifyToken() {
-      if (!token) {
-        showError('Invalid confirmation link');
-        return;
-      }
+ function verifyToken() {
+  if (!token) {
+    showError('Invalid confirmation link');
+    return;
+  }
 
-      fetch('/auth/confirm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          showSuccess('Your email has been verified successfully!');
-        } else {
-          showError(data.error || 'Email confirmation failed. Please try again.');
-        }
-      })
-      .catch(err => {
-        showError('An error occurred. Please check your connection and try again.');
-      });
+  fetch('/auth/confirm', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token })
+  })
+  .then(async (response) => {
+    const data = await response.json();
+    if (!response.ok) {
+      // Handle HTTP errors (4xx, 5xx)
+      throw new Error(data.error || 'Request failed');
     }
+    return data;
+  })
+  .then(data => {
+    if (data.success) {
+      showSuccess(data.message || 'Email verified successfully!');
+    } else {
+      showError(data.error || 'Email confirmation failed');
+    }
+  })
+  .catch(err => {
+    showError(err.message || 'An error occurred. Please try again.');
+  });
+}
+
+
 
     // Initial verification
     verifyToken();
