@@ -25,28 +25,23 @@ document.getElementById('show-login')?.addEventListener('click', (e) => {
 const handleAuth = async (form, endpoint) => {
   const submitBtn = form.querySelector('button[type="submit"]');
   const originalBtnText = submitBtn.textContent;
-  
+
   try {
-    // Validate form before submission
     if (!validateForm(form, endpoint)) return;
-    
-    // UI Loading state
+
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="spinner"></span> Processing...';
-    
-    // Prepare form data
+
     const formData = new FormData(form);
     const payload = Object.fromEntries(formData);
-    
-    // Add CSRF token if needed
+
     if (window.csrfToken) {
       payload._csrf = window.csrfToken;
     }
-    
-    // API Request
+
     const res = await fetch(`/auth/${endpoint}`, {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
@@ -54,41 +49,44 @@ const handleAuth = async (form, endpoint) => {
     });
 
     const data = await res.json();
-    
+
     if (!res.ok) {
-      // Improved error extraction
-      const errorMessage = data.error?.message || 
-                          data.message || 
-                          data.error ||
-                          `Request failed with status ${res.status}`;
+      const errorMessage = data.error?.message ||
+        data.message ||
+        data.error ||
+        `Request failed with status ${res.status}`;
       throw new Error(errorMessage);
     }
 
-    // Success handling
+    // ✅ Success handling
+    if (endpoint === 'login') {
+      // Store JWT token in localStorage
+      if (data.data?.token) {
+        localStorage.setItem('authToken', data.data.token);
+      }
+
+      // Redirect to dashboard
+      window.location.href = '/dashboard';
+      return;
+    }
+
     if (data.redirect) {
-  window.location.href = data.redirect;
-} else if (data.message) {
-  showAlert(form, data.message, 'success');
-  if (endpoint === 'signup') {
-    form.reset();
-  } else if (endpoint === 'login') {
-    // Redirect to dashboard after successful login
-    window.location.href = '/dashboard';
-  }
-}
+      window.location.href = data.redirect;
+    } else if (data.message) {
+      showAlert(form, data.message, 'success');
+      if (endpoint === 'signup') {
+        form.reset();
+      }
+    }
 
-
-    
   } catch (err) {
     console.error(`Auth error (${endpoint}):`, err);
     showAlert(form, err.message, 'error');
-    
-    // Re-enable CAPTCHA if used
+
     if (window.grecaptcha && endpoint === 'signup') {
       grecaptcha.reset();
     }
   } finally {
-    // Reset UI state
     submitBtn.disabled = false;
     submitBtn.textContent = originalBtnText;
   }
