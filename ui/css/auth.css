@@ -96,20 +96,55 @@ h2 {
 /* Status Messages */
 #auth-status {
   padding: 1rem;
-  border-radius: 0.375rem;
+  border-radius: 0.5rem; /* Slightly smoother rounding */
   margin-top: 1rem;
   text-align: center;
+  font-weight: 500; /* Better readability */
+  border: 1px solid transparent; /* Prep for hover/focus effects */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+  transition: all 0.2s ease; /* Smooth hover/focus transitions */
 }
 
+/* Success State */
 #auth-status.success {
-  background-color: #ecfdf5;
-  color: var(--success);
+  background-color: #f0fdf4; /* Lighter green for better contrast */
+  color: var(--success, #16a34a); /* Fallback if --success not defined */
+  border-color: #bbf7d0; /* Soft green border */
 }
 
+/* Error State */
 #auth-status.error {
-  background-color: #fef2f2;
-  color: var(--error);
+  background-color: #fef2f2; 
+  color: var(--error, #dc2626); /* Fallback if --error not defined */
+  border-color: #fecaca; /* Soft red border */
 }
+
+/* Optional: Hover & Focus Effects */
+#auth-status:hover {
+  transform: translateY(-1px); /* Slight lift on hover */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#auth-status:focus {
+  outline: 2px solid #93c5fd; /* Blue outline for accessibility */
+  outline-offset: 2px;
+}
+
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 
 /* Utilities */
 .hidden {

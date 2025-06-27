@@ -66,11 +66,18 @@ const handleAuth = async (form, endpoint) => {
 
     // Success handling
     if (data.redirect) {
-      window.location.href = data.redirect;
-    } else if (data.message) {
-      showAlert(form, data.message, 'success');
-      if (endpoint === 'signup') form.reset();
-    }
+  window.location.href = data.redirect;
+} else if (data.message) {
+  showAlert(form, data.message, 'success');
+  if (endpoint === 'signup') {
+    form.reset();
+  } else if (endpoint === 'login') {
+    // Redirect to dashboard after successful login
+    window.location.href = '/dashboard';
+  }
+}
+
+
     
   } catch (err) {
     console.error(`Auth error (${endpoint}):`, err);
@@ -86,6 +93,7 @@ const handleAuth = async (form, endpoint) => {
     submitBtn.textContent = originalBtnText;
   }
 };
+
 
 
 
