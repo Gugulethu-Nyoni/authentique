@@ -3,14 +3,12 @@ dotenv.config();
 
 const isProd = process.env.NODE_ENV === 'production';
 
-console.log('RESEND_API_KEY:', process.env.RESEND_API_KEY);
-
 
 export const config = {
   // Core
   env: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT || '3000'),
-  baseUrl: process.env.BASE_URL || (isProd ? 'https://api.botaniqsa.com' : 'http://localhost:3000'),
+  baseUrl: process.env.BASE_URL || (isProd ? 'https://app.botaniqsa.com' : 'http://localhost:3000'),
 
 brand: {
     name: process.env.BRAND_NAME || 'Botaniq',
