@@ -40,8 +40,10 @@ brand: {
   },
 
   // Auth (unchanged)
+  // process.env.JWT_SECRET || 'dev-secret-64-chars-minimum-xxxx
+  
   jwt: {
-    secret: process.env.JWT_SECRET || 'dev-secret-64-chars-minimum-xxxx',
+    secret:'KtrDWbW96NhNRyfyM72hQ1SGDV+IxULuevzTPSJPn7ajEKYWBAV4087shzhaNO/BoW0ByCkGANwpijAPtxXlnA==',
     accessExpiry: process.env.JWT_ACCESS_EXPIRY || '15m',
     refreshExpiry: '7d'
   },
