@@ -1,0 +1,58 @@
+authentique/
+├── **bin/**                     # NEW: CLI Setup Tools
+│   ├── init.js                  # Config generator
+│   └── migrate.js               # Migration runner
+│
+├── **config/**                  # Configuration
+│   ├── auth.js                 # JWT/OAuth settings
+│   ├── databases.js            # DB connection configs
+│   └── env.js                  # Environment loader
+│
+├── **src/**
+│   ├── **models/**             # Data schemas
+│   │   ├── user.js             # User model
+│   │   └── session.js          # Session model
+│   │
+│   ├── **services/**           # Core business logic
+│   │   ├── auth/               
+│   │   │   ├── strategies/     # Auth methods
+│   │   │   │   ├── jwt.js      # Token service
+│   │   │   │   ├── oauth.js    # Base OAuth
+│   │   │   │   ├── github.js   # GitHub strategy
+│   │   │   │   └── google.js   # Google strategy
+│   │   │   └── service.js      # Main auth logic
+│   │   │
+│   │   ├── password.js         # Hashing/validation
+│   │   └── email.js            # Resend integration
+│   │
+│   ├── **adapters/**           # Database implementations
+│   │   ├── mysql/
+│   │   │   ├── migrations/     # MySQL migrations
+│   │   │   └── adapter.js
+│   │   ├── mongodb/
+│   │   │   ├── migrations/     # MongoDB scripts
+│   │   │   └── adapter.js
+│   │   ├── sqlite/
+│   │   │   ├── migrations/
+│   │   │   └── adapter.js
+│   │   └── supabase/           # Supabase-specific
+│   │       ├── migrations/     # SQL migrations
+│   │       └── adapter.js
+│   │
+│   ├── **http/**               # Web interface
+│   │   ├── controllers/        # Route handlers
+│   │   ├── routes/             # Endpoint definitions
+│   │   └── middleware/         # Auth middleware
+│   │
+│   └── **lib/**                # Shared utilities
+│       ├── db.js               # DB connector
+│       └── query-builder.js    # SQL helper
+│
+├── **tests/**
+│   ├── unit/                   # Service tests
+│   ├── integration/            # Route tests
+│   └── fixtures/               # Mock data
+│
+├── .env                        # Environment vars
+├── index.js                    # Package entry
+└── server.js                   # HTTP server
