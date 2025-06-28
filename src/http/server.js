@@ -1,3 +1,7 @@
+import '../../config/env-loader.js'; //load .env
+import config from '../../config/authentique.config.js';
+import { getDatabaseAdapter } from '../adapters/databases/database-adapter.js';
+
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';

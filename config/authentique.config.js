@@ -1,7 +1,19 @@
-import databaseConfig from '../config/databases.js';
-import emailConfig from '../config/auth.js';
+import dotenv from 'dotenv';
+dotenv.config();
+
+import databaseConfig from './databases.js';
+import emailConfig from './auth.js';
+
+const isProd = process.env.NODE_ENV === 'production';
 
 export default {
+  env: process.env.NODE_ENV || 'development',
+  port: parseInt(process.env.PORT || '3000'),
+  baseUrl: process.env.BASE_URL || (isProd ? 'https://app.botaniqsa.com' : 'http://localhost:3000'),
+  brand: {
+    name: process.env.BRAND_NAME || 'Botaniq',
+    supportEmail: process.env.BRAND_SUPPORT_EMAIL || 'support@botaniqsa.com'
+  },
   database: {
     adapter: 'mysql',
     config: databaseConfig['mysql']

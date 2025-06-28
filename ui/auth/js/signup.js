@@ -1,3 +1,5 @@
+import { showFieldError, clearFieldErrors, showAlert } from './ui-feedback.js';
+
 // Password visibility toggle
 document.querySelector('.password-toggle').addEventListener('click', function() {
   const passwordInput = document.querySelector('#signup-password');
@@ -5,32 +7,14 @@ document.querySelector('.password-toggle').addEventListener('click', function() 
   passwordInput.setAttribute('type', type);
 });
 
-
 // Form submit handler
 const signupForm = document.getElementById('signupForm');
-
-const showFieldError = (input, message) => {
-  const errorEl = document.createElement('p');
-  errorEl.className = 'input-error text-red-600 text-sm mt-1';
-  errorEl.textContent = message;
-  input.classList.add('border-red-500');
-  input.insertAdjacentElement('afterend', errorEl);
-};
-
-const showAlert = (form, message, type) => {
-  form.querySelectorAll('.form-alert').forEach(el => el.remove());
-  const alertEl = document.createElement('div');
-  alertEl.className = `form-alert p-3 mb-4 rounded ${type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`;
-  alertEl.innerHTML = `<div>${message}</div>`;
-  form.prepend(alertEl);
-  setTimeout(() => alertEl.remove(), 5000);
-};
 
 const validateForm = (form) => {
   const inputs = form.querySelectorAll('input[required]');
   let isValid = true;
 
-  form.querySelectorAll('.input-error').forEach(el => el.remove());
+  clearFieldErrors(form);
 
   inputs.forEach(input => {
     if (!input.value.trim()) {
@@ -50,31 +34,39 @@ const validateForm = (form) => {
 
 if (signupForm) {
   signupForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validateForm(signupForm)) return;
+  if (!validateForm(signupForm)) return;
 
-    const formData = new FormData(signupForm);
-    const payload = Object.fromEntries(formData.entries());
+  const formData = new FormData(signupForm);
+  const payload = Object.fromEntries(formData.entries());
 
-    try {
-      const res = await fetch('http://localhost:3000/api/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+  try {
+    const res = await fetch('http://localhost:3000/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message || 'Signup failed.');
+    if (!res.ok) throw new Error(data.message || 'Signup failed.');
 
-      showAlert(signupForm, 'Signup successful! Please check your email to confirm your account.', 'success');
-      signupForm.reset();
+   // Show persistent success message outside form, then hide form
+showAlert(signupForm, 'Signup successful! Please check your email to confirm your account.', 'success', {
+  container: document.getElementById('signup-feedback'),
+  dismissAfter: null
+});
 
-    } catch (err) {
-      showAlert(signupForm, err.message, 'error');
-    }
-  });
+
+    signupForm.classList.add('hidden');
+
+  } catch (err) {
+    showAlert(signupForm, err.message, 'error', {
+      container: document.getElementById('signup-feedback'),
+      dismissAfter: 5000
+    });
+  }
+});
+
 }
-
-

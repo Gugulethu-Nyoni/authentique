@@ -25,6 +25,7 @@
 <body>
   <div class="auth-container">
     <div class="auth-card">
+      <div id="signup-feedback"></div>
       <form class="auth-form" id="signupForm">
         <h2>Create Account</h2>
 
@@ -33,6 +34,7 @@
           <input type="text" id="signup-name" name="name" required>
         </div>
 
+        
         <div class="form-group">
           <label for="signup-email">Email</label>
           <input type="email" id="signup-email" name="email" required>
@@ -85,5 +87,7 @@
       }
     });
   </script>
+
+  <script type="module" src="./js/signup.js"></script>
 </body>
 </html>

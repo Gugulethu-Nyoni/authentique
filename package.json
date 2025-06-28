@@ -23,7 +23,7 @@
     "migrate": "authentique-migrate run",
     "migrate:rollback": "authentique-migrate rollback",
     "migrate:refresh": "npm run migrate:rollback -- 999 && npm run migrate",
-    "start-server": "concurrently \"node src/http/server.js\" \"serve src/http/ui .\"",
+    "start-server": "concurrently \"node src/http/server.js\" \"node ui/ui-server.js\"",
     "setup": "npm run init && npm run migrate && npm run start-server"
   },
   "config": {
@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.2",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",
     "better-sqlite3": "^8.6.0",
     "chalk": "^5.4.1",
@@ -38,8 +39,10 @@
     "dotenv": "^16.4.1",
     "inquirer": "^9.2.17",
     "jsonwebtoken": "^9.0.2",
+    "mailgun-js": "^0.22.0",
     "mongodb": "^6.17.0",
     "mysql2": "^3.14.1",
+    "nodemailer": "^7.0.3",
     "resend": "^4.6.0"
   },
   "devDependencies": {
