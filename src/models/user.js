@@ -11,7 +11,13 @@ export const createUser = async (user) => {
   const result = await db.query(
     `INSERT INTO users (name, email, password_hash, verification_token, verification_token_expires_at) 
      VALUES (?, ?, ?, ?, ?)`,
-    [user.name, user.email, user.password_hash, user.verification_token, user.verification_token_expires_at]
+    [
+      user.name || null,
+      user.email || null,
+      user.password_hash || null,
+      user.verification_token || null,
+      user.verification_token_expires_at || null
+    ]
   );
   return result.insertId;
 };

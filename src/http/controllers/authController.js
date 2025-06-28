@@ -1,4 +1,5 @@
 import { signupUser } from '../../services/auth/service.js';
+import { emailService } from '../../services/email.js';  // import email service
 import { successResponse, errorResponse } from '../utils/response.js';
 
 export const signupHandler = async (req, res) => {
@@ -10,7 +11,12 @@ export const signupHandler = async (req, res) => {
 
     const { verification_token } = await signupUser({ name, email, password });
 
-    // Next step: send verification email here in Deliverable 5
+    // Send confirmation email here
+    await emailService.sendConfirmationEmail({
+      to: email,
+      name,
+      token: verification_token
+    });
 
     return successResponse(
       res,

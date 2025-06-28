@@ -1,4 +1,4 @@
-import config from '../../config/authentique.config.js';
+import authentiqueConfig from '../../config/authentique.config.js';
 import { Resend } from 'resend';
 import mailgunJs from 'mailgun-js';
 import nodemailer from 'nodemailer';
@@ -47,38 +47,40 @@ export class EmailService {
   }
 
   _initDriver() {
-    switch (config.email.config.driver) {
+    const driver = process.env.EMAIL_DRIVER?.toLowerCase();
+
+    switch (driver) {
       case 'resend':
-        return new ResendDriver(config.email.config.resend);
+        return new ResendDriver(authentiqueConfig.email.config.resend);
       case 'mailgun':
-        return new MailgunDriver(config.email.config.mailgun);
+        return new MailgunDriver(authentiqueConfig.email.config.mailgun);
       case 'smtp':
-        return new SMTPDriver(config.email.config.smtp);
+        return new SMTPDriver(authentiqueConfig.email.config.smtp);
       case 'mock':
         return new MockEmailDriver();
       default:
-        throw new Error(`Unsupported email driver: ${config.email.config.driver}`);
+        throw new Error(`Unsupported email driver: ${driver}`);
     }
   }
 
   async sendConfirmationEmail({ to, name, token }) {
-    const confirmationUrl = `${config.baseUrl}/auth/confirm?token=${token}`;
-    const subject = `Confirm Your ${config.brand.name} Account`;
+    const confirmationUrl = `${process.env.BASE_URL}/auth/confirm?token=${token}`;
+    const subject = `Confirm Your ${process.env.BRAND_NAME} Account`;
 
     const html = this._generateConfirmationTemplate({
       name,
-      brandName: config.brand.name,
-      supportEmail: config.brand.supportEmail,
+      brandName: process.env.BRAND_NAME,
+      supportEmail: process.env.BRAND_SUPPORT_EMAIL,
       confirmationUrl,
-      year: new Date().getFullYear()
+      year: new Date().getFullYear(),
     });
 
     return this.driver.send({
-      from: `${config.email.config.fromName} <${config.email.config.from}>`,
+      from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`,
       to,
       subject,
       html,
-      text: `Hi ${name}, please confirm your email by visiting: ${confirmationUrl}`
+      text: `Hi ${name}, please confirm your email by visiting: ${confirmationUrl}`,
     });
   }
 
