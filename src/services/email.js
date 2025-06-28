@@ -64,7 +64,7 @@ export class EmailService {
   }
 
   async sendConfirmationEmail({ to, name, token }) {
-    const confirmationUrl = `${process.env.BASE_URL}/auth/confirm?token=${token}`;
+    const confirmationUrl = `${process.env.UI_BASE_URL}/auth/confirm.html?token=${token}`;
     const subject = `Confirm Your ${process.env.BRAND_NAME} Account`;
 
     const html = this._generateConfirmationTemplate({

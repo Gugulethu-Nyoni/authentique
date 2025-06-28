@@ -2,11 +2,13 @@ import { getMySQLAdapter } from '../adapters/databases/mysql/index.js';
 
 const db = getMySQLAdapter();
 
+// Existing: find by email
 export const findUserByEmail = async (email) => {
   const rows = await db.query('SELECT * FROM users WHERE email = ?', [email]);
   return rows[0];
 };
 
+// Existing: create new user
 export const createUser = async (user) => {
   const result = await db.query(
     `INSERT INTO users (name, email, password_hash, verification_token, verification_token_expires_at) 
@@ -20,4 +22,25 @@ export const createUser = async (user) => {
     ]
   );
   return result.insertId;
+};
+
+// ✅ New: find user by verification token
+export const findUserByVerificationToken = async (token) => {
+  const rows = await db.query(
+    'SELECT * FROM users WHERE verification_token = ?',
+    [token]
+  );
+  return rows[0];
+};
+
+// ✅ New: mark user as verified by ID
+export const verifyUserById = async (userId) => {
+  await db.query(
+    `UPDATE users
+     SET is_verified = 1,
+         verification_token = NULL,
+         verification_token_expires_at = NULL
+     WHERE id = ?`,
+    [userId]
+  );
 };

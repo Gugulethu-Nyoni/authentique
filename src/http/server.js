@@ -10,7 +10,7 @@ import authRoutes from './routes/auth.routes.js';
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:3001',  // UI server origin
+  origin: process.env.UI_BASE_URL,  // UI server origin
   credentials: true
 }));
 
