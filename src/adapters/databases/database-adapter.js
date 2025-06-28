@@ -1,25 +1,24 @@
 // src/adapters/databases/database-adapter.js
-import MySQLAdapter from './mysql/adapter.js';
-import SQLiteAdapter from './sqlite/adapter.js';
-import MongoDBAdapter from './mongodb/adapter.js';
-import SupabaseAdapter from './supabase/adapter.js';
-
-
-
-
-// src/adapters/databases/database-adapter.js
-export function getDatabaseAdapter(adapterName, config) {
+export async function getDatabaseAdapter(adapterName, config) {
   try {
     // Only load the adapter we need
-    const adapterPath = `./${adapterName.toLowerCase()}/adapter.js`;
-    const { default: Adapter } = await import(adapterPath);
-    return new Adapter(config);
+    switch (adapterName.toLowerCase()) {
+      case 'mysql':
+        const { default: MySQLAdapter } = await import('./mysql/adapter.js');
+        return new MySQLAdapter(config);
+      case 'sqlite':
+        throw new Error('SQLite support not yet implemented');
+      case 'mongodb':
+        throw new Error('MongoDB support not yet implemented');
+      case 'supabase':
+        throw new Error('Supabase support not yet implemented');
+      default:
+        throw new Error(`Unsupported database adapter: ${adapterName}`);
+    }
   } catch (err) {
     throw new Error(`Failed to load ${adapterName} adapter: ${err.message}`);
   }
 }
-
-
 
 export class DatabaseAdapter {
   constructor(config) {

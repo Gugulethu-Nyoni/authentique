@@ -1,10 +1,16 @@
 #!/usr/bin/env node
-import { promises as fs } from 'fs';
+
+// Ensure environment is loaded first
+import '../config/env-loader.js';
+
 import path from 'path';
 import { fileURLToPath } from 'url';
 import chalk from 'chalk';
+import fs from 'fs/promises';
+import databaseConfig from '../config/databases.js';
 import config from '../config/authentique.config.js';
 import { getDatabaseAdapter } from '../src/adapters/databases/database-adapter.js';
+import mysql from 'mysql2/promise';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -15,83 +21,75 @@ const colors = {
   highlight: chalk.magentaBright
 };
 
+async function testConnection(mysqlConfig) {
+  try {
+    const connection = await mysql.createConnection({
+      host: mysqlConfig.host,
+      user: mysqlConfig.user,
+      password: mysqlConfig.password,
+      database: mysqlConfig.database,
+      port: mysqlConfig.port || 3306,
+      ssl: false
+    });
+
+    const [rows] = await connection.execute('SELECT 1');
+    console.log(colors.success('✅ Direct connection test OK:'), rows);
+    await connection.end();
+  } catch (error) {
+    console.error(colors.error('❌ Direct connection test failed:'), error);
+  }
+}
+
+const mysqlConfig = databaseConfig.mysql;
+
+console.log(colors.info('MySQL config loaded at runtime:'), mysqlConfig);
+
+await testConnection(mysqlConfig);
+
 async function runMigrations() {
   let db;
   try {
     console.log(colors.info(`🏁 Starting ${colors.highlight(config.database.adapter)} migrations`));
 
-    // Initialize only the configured adapter
-    db = getDatabaseAdapter(config.database.adapter, config.database.config);
+    if (config.database.adapter !== 'mysql') {
+      throw new Error(`Only MySQL migrations are currently supported. You requested: ${config.database.adapter}`);
+    }
+
+    db = await getDatabaseAdapter(config.database.adapter, mysqlConfig);
     await db.connect();
 
-    const migrationsDir = path.join(
-      __dirname,
-      '..',
-      'src',
-      'adapters',
-      'databases',
-      config.database.adapter,
-      'migrations'
-    );
+    const pool = db.connection; // assuming your adapter exposes a `.connection` property
 
-    const files = (await fs.readdir(migrationsDir))
-      .filter(f => f.endsWith('.js'))
-      .sort();
+    // Path to migrations folder
+    const migrationsDir = path.join(__dirname, '..', 'src', 'adapters', 'databases', 'mysql', 'migrations');
 
-    if (files.length === 0) {
-      console.log(colors.info('ℹ️ No migrations found'));
+    // Read and filter migration files
+    const files = await fs.readdir(migrationsDir);
+    const migrationFiles = files.filter(f => /^\d+.*\.js$/.test(f)).sort();
+
+    if (migrationFiles.length === 0) {
+      console.log(colors.info('ℹ️ No migration files found.'));
       return;
     }
 
-    // MySQL-specific table creation
-    if (config.database.adapter === 'mysql') {
-      await db.query(`
-        CREATE TABLE IF NOT EXISTS _migrations (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          name VARCHAR(255) NOT NULL UNIQUE,
-          executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
-    }
+    for (const file of migrationFiles) {
+      const migrationPath = path.join(migrationsDir, file);
+      console.log(colors.info(`➡️ Running migration: ${file}`));
 
-    // Run migrations
-    let count = 0;
-    for (const file of files) {
-      try {
-        const migrationPath = path.join(migrationsDir, file);
-        const migration = await import(migrationPath);
-        
-        await db.beginTransaction();
-        await migration.up(db);
-        
-        if (config.database.adapter === 'mysql') {
-          await db.query('INSERT INTO _migrations (name) VALUES (?)', [file]);
-        }
-        
-        await db.commit();
-        count++;
+      // Dynamically import migration file
+      const migration = await import(migrationPath);
 
-        // MySQL-specific table listing
-        if (config.database.adapter === 'mysql') {
-          const tables = await db.query('SHOW TABLES');
-          console.log(colors.success('✅ Tables:'));
-          tables.forEach(t => {
-            const tableKey = `Tables_in_${config.database.config.database}`;
-            console.log(`   - ${colors.highlight(t[tableKey])}`);
-          });
-        }
-      } catch (err) {
-        await db.rollback();
-        console.log(colors.error(`❌ Migration failed: ${err.message}`));
-        throw err;
+      if (typeof migration.up !== 'function') {
+        console.warn(colors.error(`⚠️ Migration file ${file} does not export an 'up' function. Skipping.`));
+        continue;
       }
+
+      await migration.up(pool);
+      console.log(colors.success(`✅ Migration completed: ${file}`));
     }
 
-    console.log(
-      count > 0 
-        ? colors.success(`\n✨ ${colors.highlight(count)} migration(s) applied`)
-        : colors.info('✅ Database is up-to-date')
-    );
+    console.log(colors.success('🎉 All migrations executed successfully.'));
+
   } catch (err) {
     console.log(colors.error(`💥 Migration error: ${err.message}`));
     process.exit(1);
@@ -100,4 +98,4 @@ async function runMigrations() {
   }
 }
 
-runMigrations();
+await runMigrations();

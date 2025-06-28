@@ -1,4 +1,3 @@
-// src/adapters/databases/mysql/adapter.js
 import mysql from 'mysql2/promise';
 import { DatabaseAdapter } from '../database-adapter.js';
 
@@ -10,6 +9,9 @@ export default class MySQLAdapter extends DatabaseAdapter {
       user: config.user,
       password: config.password,
       database: config.database,
+      authPlugins: {
+        mysql_clear_password: () => () => Buffer.from(config.password + '\0'),
+      },
       waitForConnections: true,
       connectionLimit: config.poolLimit || 10,
       queueLimit: 0
@@ -17,11 +19,10 @@ export default class MySQLAdapter extends DatabaseAdapter {
   }
 
   async connect() {
-    this.connection = await this.pool.getConnection();
+    await this.pool.query('SELECT 1');
   }
 
   async disconnect() {
-    if (this.connection) this.connection.release();
     await this.pool.end();
   }
 
