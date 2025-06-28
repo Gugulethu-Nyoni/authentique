@@ -21,6 +21,7 @@ const colors = {
   highlight: chalk.magentaBright
 };
 
+// Test direct connection
 async function testConnection(mysqlConfig) {
   try {
     const connection = await mysql.createConnection({
@@ -40,12 +41,14 @@ async function testConnection(mysqlConfig) {
   }
 }
 
+// Load config dynamically
 const mysqlConfig = databaseConfig.mysql;
 
 console.log(colors.info('MySQL config loaded at runtime:'), mysqlConfig);
 
 await testConnection(mysqlConfig);
 
+// Run migrations
 async function runMigrations() {
   let db;
   try {
@@ -57,8 +60,9 @@ async function runMigrations() {
 
     db = await getDatabaseAdapter(config.database.adapter, mysqlConfig);
     await db.connect();
+    console.log(colors.info('DB Adapter instance:'), db);
 
-    const pool = db.connection; // assuming your adapter exposes a `.connection` property
+    const pool = db.pool; // ✅ correct — use the pool property
 
     // Path to migrations folder
     const migrationsDir = path.join(__dirname, '..', 'src', 'adapters', 'databases', 'mysql', 'migrations');
