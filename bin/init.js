@@ -54,40 +54,41 @@ async function generateConfig(answers) {
 
   // Write config files that work with your .env
   await Promise.all([
-    fs.writeFile(
-      path.join(process.cwd(), 'config', 'authentique.config.js'),
-      `export default ${JSON.stringify(config, null, 2)}`
-    ),
-    fs.writeFile(
-      path.join(process.cwd(), 'config', 'databases.js'),
-      `export default {
-        ${answers.database.toLowerCase()}: {
-          host: process.env.DB_MYSQL_HOST,
-          port: process.env.DB_MYSQL_PORT,
-          user: process.env.DB_MYSQL_USER,
-          password: process.env.DB_MYSQL_PASSWORD,
-          database: process.env.DB_MYSQL_NAME,
-          poolLimit: process.env.DB_MYSQL_POOL_LIMIT
+  fs.writeFile(
+    path.join(process.cwd(), 'config', 'authentique.config.js'),
+    `import databaseConfig from '../config/databases.js';\nimport emailConfig from '../config/auth.js';\n\nexport default ${JSON.stringify(config, null, 2)}`
+  ),
+  fs.writeFile(
+    path.join(process.cwd(), 'config', 'databases.js'),
+    `export default {
+      ${answers.database.toLowerCase()}: {
+        host: process.env.DB_MYSQL_HOST,
+        port: process.env.DB_MYSQL_PORT,
+        user: process.env.DB_MYSQL_USER,
+        password: process.env.DB_MYSQL_PASSWORD,
+        database: process.env.DB_MYSQL_NAME,
+        poolLimit: process.env.DB_MYSQL_POOL_LIMIT
+      }
+    }`
+  ),
+  fs.writeFile(
+    path.join(process.cwd(), 'config', 'auth.js'),
+    `export default {
+      jwtSecret: process.env.JWT_SECRET,
+      jwtExpiry: process.env.JWT_ACCESS_EXPIRY,
+      emailDriver: process.env.EMAIL_DRIVER,
+      ${answers.emailService.toLowerCase()}: {
+        ${answers.emailService === 'Resend' ? 
+          'apiKey: process.env.RESEND_API_KEY' :
+          answers.emailService === 'Mailgun' ?
+          'apiKey: process.env.MAILGUN_API_KEY\ndomain: process.env.MAILGUN_DOMAIN' :
+          '/* Configure your email provider */'
         }
-      }`
-    ),
-    fs.writeFile(
-      path.join(process.cwd(), 'config', 'auth.js'),
-      `export default {
-        jwtSecret: process.env.JWT_SECRET,
-        jwtExpiry: process.env.JWT_ACCESS_EXPIRY,
-        emailDriver: process.env.EMAIL_DRIVER,
-        ${answers.emailService.toLowerCase()}: {
-          ${answers.emailService === 'Resend' ? 
-            'apiKey: process.env.RESEND_API_KEY' :
-            answers.emailService === 'Mailgun' ?
-            'apiKey: process.env.MAILGUN_API_KEY\ndomain: process.env.MAILGUN_DOMAIN' :
-            '/* Configure your email provider */'
-          }
-        }
-      }`
-    )
-  ]);
+      }
+    }`
+  )
+]);
+
 
   console.log(`
   ✅ Configuration complete!
