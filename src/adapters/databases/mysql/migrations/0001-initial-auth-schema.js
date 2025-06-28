@@ -47,6 +47,10 @@ export const up = async (pool) => {
 };
 
 export const down = async (pool) => {
+  // Drop dependent tables first
+  await pool.query(`DROP TABLE IF EXISTS sessions`);
   await pool.query(`DROP TABLE IF EXISTS auth_logs`);
+  await pool.query(`DROP TABLE IF EXISTS products`);
+  // Then drop referenced tables
   await pool.query(`DROP TABLE IF EXISTS users`);
 };
