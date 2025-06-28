@@ -8,34 +8,26 @@
     "authentique-migrate": "./bin/migrate.js"
   },
   "scripts": {
-    // Testing
     "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
     "test:watch": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --watch",
     "test:coverage": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --coverage",
-    
-    // Linting
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    
-    // Execution
     "start": "node examples/server.js",
     "dev": "nodemon --experimental-vm-modules examples/server.js",
     "typecheck": "tsc --noEmit",
-    
-    // Permissions Handling
-    "postinstall-dev": "node -e \"import('fs').then(fs => fs.chmodSync('./bin/init.js', '755')) && import('fs').then(fs => fs.chmodSync('./bin/migrate.js', '755'))\"",
-    "prepare": "npm run postinstall-dev",
-    "prepublishOnly": "node bin/set-permissions.js",
-    
-    // Database
+    "postinstall": "node bin/set-permissions.js",
+    "prepare": "npm run postinstall > /dev/null 2>&1",
+    "prepublishOnly": "npm run test && npm run lint",
     "init": "authentique-init",
     "migrate": "authentique-migrate run",
     "migrate:rollback": "authentique-migrate rollback",
     "migrate:refresh": "npm run migrate:rollback -- 999 && npm run migrate",
-    
-    // Server
     "start-server": "concurrently \"node src/http/server.js\" \"serve src/http/ui\"",
     "setup": "npm run init && npm run migrate && npm run start-server"
+  },
+  "config": {
+    "unsafe-perm": true
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -48,7 +40,7 @@
   "devDependencies": {
     "@jest/globals": "^30.0.3",
     "concurrently": "^8.2.2",
-    "eslint": "^8.57.0",
+    "eslint": "^9.0.0",
     "husky": "^9.0.11",
     "jest": "^29.7.0",
     "nodemon": "^3.1.0",
