@@ -75,24 +75,36 @@ export const confirmEmailHandler = async (req, res) => {
 export const loginHandler = async (req, res) => {
   try {
     const { email, password } = req.body;
+
     if (!email || !password) {
       return errorResponse(res, 'Email and password are required.', 400);
     }
 
+    console.log(`Login attempt for email: ${email}`);
+
     const { user, token } = await loginUser({ email, password });
 
-    // Set HTTP-only cookie with JWT token for security
-    res.cookie('auth_token', token, {
+    const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // only send on HTTPS in prod
+      secure: process.env.NODE_ENV === 'production' ? true : false, // HTTPS only in prod
       sameSite: 'lax',
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    });
+      maxAge: 24 * 60 * 60 * 1000, // 1 day in ms
+    };
+
+    console.log('Setting auth_token cookie with options:', cookieOptions);
+
+    // Set HTTP-only cookie with JWT token for security
+    res.cookie('auth_token', token, cookieOptions);
 
     return successResponse(res, 'Login successful.', { user });
 
   } catch (err) {
-    console.error(err);
-    return errorResponse(res, err.message || 'Login failed.', 401);
+    console.error('Login error:', err);
+
+    if (err.message === 'Invalid email or password') {
+      return errorResponse(res, err.message, 401);
+    }
+
+    return errorResponse(res, err.message || 'Login failed.', 500);
   }
 };

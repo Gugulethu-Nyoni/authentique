@@ -1,6 +1,7 @@
 import { findUserByEmail, createUser } from '../../models/user.js';
 import { hashPassword } from '../password.js';
 import { generateVerificationToken } from './strategies/jwt.js';
+import { generateAuthToken } from './strategies/jwt.js';
 import { comparePassword } from '../password.js';
 
 

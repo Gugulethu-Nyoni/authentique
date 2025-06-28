@@ -22,13 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
     showStatus('Logging in...');
 
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',  // important for cookie to be sent back
-        body: JSON.stringify({ email, password })
+      const res = await fetch('http://localhost:3000/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ email, password })
       });
 
       const data = await res.json();
@@ -45,7 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 1000);
 
     } catch (err) {
-      showStatus(err.message, true);
-    }
+  console.error('Login error:', err);
+  // If err.message exists, use it, else convert err to string
+  showStatus(err.message || JSON.stringify(err), true);
+}
   });
 });
