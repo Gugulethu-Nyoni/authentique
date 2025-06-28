@@ -1,6 +1,8 @@
 import { findUserByEmail, createUser } from '../../models/user.js';
 import { hashPassword } from '../password.js';
 import { generateVerificationToken } from './strategies/jwt.js';
+import { comparePassword } from '../password.js';
+
 
 export const signupUser = async ({ name, email, password }) => {
   console.log('[signupUser] Starting signup for:', email);
@@ -36,4 +38,19 @@ export const signupUser = async ({ name, email, password }) => {
     email,
     name
   };
+};
+
+
+export const loginUser = async ({ email, password }) => {
+  const user = await findUserByEmail(email);
+  if (!user) throw new Error('Invalid email or password.');
+
+  if (!user.is_verified) throw new Error('Please verify your email before logging in.');
+
+  const passwordValid = await comparePassword(password, user.password_hash);
+  if (!passwordValid) throw new Error('Invalid email or password.');
+
+  const token = generateAuthToken({ userId: user.id, email: user.email });
+
+  return { user: { id: user.id, email: user.email, name: user.name }, token };
 };

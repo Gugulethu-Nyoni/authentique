@@ -10,3 +10,8 @@ export const generateVerificationToken = (payload) => {
 
   return { token, expiresAt };
 };
+
+
+export const generateAuthToken = (payload) => {
+  return jwt.sign(payload, config.jwtSecret, { expiresIn: '24h' });
+};

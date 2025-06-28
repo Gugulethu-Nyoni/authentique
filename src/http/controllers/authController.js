@@ -1,9 +1,11 @@
 import { signupUser } from '../../services/auth/service.js';
+import { loginUser } from '../../services/auth/service.js';
 import { emailService } from '../../services/email.js';
 import { successResponse, errorResponse } from '../utils/response.js';
 import jwt from 'jsonwebtoken';
 import config from '../../../config/auth.js';
 import { findUserByVerificationToken, verifyUserById } from '../../models/user.js';
+
 
 // Signup Handler
 export const signupHandler = async (req, res) => {
@@ -65,5 +67,32 @@ export const confirmEmailHandler = async (req, res) => {
   } catch (err) {
     console.error(err);
     return errorResponse(res, 'Invalid or expired token.', 400);
+  }
+};
+
+
+
+export const loginHandler = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return errorResponse(res, 'Email and password are required.', 400);
+    }
+
+    const { user, token } = await loginUser({ email, password });
+
+    // Set HTTP-only cookie with JWT token for security
+    res.cookie('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // only send on HTTPS in prod
+      sameSite: 'lax',
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+
+    return successResponse(res, 'Login successful.', { user });
+
+  } catch (err) {
+    console.error(err);
+    return errorResponse(res, err.message || 'Login failed.', 401);
   }
 };

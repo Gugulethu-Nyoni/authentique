@@ -1,5 +1,5 @@
 import express from 'express';
-import { signupHandler, confirmEmailHandler } from '../controllers/authController.js';
+import { signupHandler, confirmEmailHandler,loginHandler } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -8,5 +8,8 @@ router.post('/api/signup', signupHandler);
 
 // Email confirmation route
 router.post('/auth/confirm', confirmEmailHandler);
+
+//login route
+router.post('/api/login', loginHandler);
 
 export default router;
