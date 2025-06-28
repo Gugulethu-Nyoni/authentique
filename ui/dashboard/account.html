@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Account Settings</title>
+  <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <nav class="dashboard-nav">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/account">Account</a>
+      <button onclick="logout()">Logout</button>
+    </nav>
+    <div class="dashboard-content">
+      <h1>Account Settings</h1>
+      <form id="account-form">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="account-email" disabled>
+        </div>
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="account-name">
+        </div>
+        <button type="submit">Update Account</button>
+      </form>
+    </div>
+  </div>
+  <script src="/js/auth.js"></script>
+  <script>
+    // Load account data
+    async function loadAccount() {
+      try {
+        const response = await fetch('/api/account', {
+          headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
+          }
+        });
+        
+        if (!response.ok) throw new Error('Failed to load account');
+        
+        const data = await response.json();
+        document.getElementById('account-email').value = data.data.user.email;
+        document.getElementById('account-name').value = data.data.user.name || '';
+      } catch (error) {
+        console.error('Account error:', error);
+        window.location.href = '/login';
+      }
+    }
+    
+    // Handle form submission
+    document.getElementById('account-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        const response = await fetch('/api/account/update', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
+          },
+          body: JSON.stringify({
+            update: {
+              name: document.getElementById('account-name').value
+            }
+          })
+        });
+        
+        if (!response.ok) throw new Error('Update failed');
+        
+        const data = await response.json();
+        alert(data.message || 'Account updated successfully');
+      } catch (error) {
+        console.error('Update error:', error);
+        alert(error.message || 'Failed to update account');
+      }
+    });
+    
+    loadAccount();
+  </script>
+</body>
+</html>

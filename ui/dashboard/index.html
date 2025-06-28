@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <nav class="dashboard-nav">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/account">Account</a>
+      <button onclick="logout()">Logout</button>
+    </nav>
+    <div class="dashboard-content">
+      <h1>Welcome to your Dashboard</h1>
+      <div id="dashboard-data"></div>
+    </div>
+  </div>
+  <script src="/js/auth.js"></script>
+  
+  <script>
+  fetch('/api/auth/status', { credentials: 'include' })
+    .then(res => {
+      if (res.status !== 200) {
+        window.location.href = '/auth/login.html';
+      }
+    });
+</script>
+
+</body>
+</html>

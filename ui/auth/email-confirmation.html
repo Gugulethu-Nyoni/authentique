@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Confirmation</title>
+  <link rel="stylesheet" href="/css/auth.css">
+  <style>
+    /* Additional styles specific to this page */
+    .auth-icon {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .auth-message {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+    
+    #auth-status.loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .spinner {
+      width: 2rem;
+      height: 2rem;
+      border: 3px solid rgba(0,0,0,0.1);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .success-icon, .error-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-icon">📧</div>
+      <h2>Email Confirmation</h2>
+
+      <div class="auth-message">
+        <p>We're verifying your email address...</p>
+      </div>
+
+      <div id="auth-status" class="loading">
+        <div class="spinner"></div>
+        <p>Please wait while we confirm your email</p>
+      </div>
+
+      <div id="success-actions" class="hidden">
+        <div class="form-group">
+          <a href="/login" class="auth-form button">Continue to Login</a>
+        </div>
+        <p class="auth-switch">Need help? <a href="/support">Contact support</a></p>
+      </div>
+      
+      <div id="error-actions" class="hidden">
+        <div class="form-group">
+          <button id="retry-button" class="auth-form button">Try Again</button>
+        </div>
+        <p class="auth-switch">Need help? <a href="/support">Contact support</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const statusDiv = document.getElementById('auth-status');
+    const successActions = document.getElementById('success-actions');
+    const errorActions = document.getElementById('error-actions');
+    const retryButton = document.getElementById('retry-button');
+
+    function showSuccess(message) {
+      statusDiv.innerHTML = `
+        <div class="success-icon">✅</div>
+        <p>${message}</p>
+      `;
+      statusDiv.className = 'success';
+      successActions.classList.remove('hidden');
+    }
+
+    function showError(message) {
+      statusDiv.innerHTML = `
+        <div class="error-icon">❌</div>
+        <p>${message}</p>
+      `;
+      statusDiv.className = 'error';
+      errorActions.classList.remove('hidden');
+    }
+
+ function verifyToken() {
+  if (!token) {
+    showError('Invalid confirmation link');
+    return;
+  }
+
+  fetch('/auth/confirm', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token })
+  })
+  .then(async (response) => {
+    const data = await response.json();
+    if (!response.ok) {
+      // Handle HTTP errors (4xx, 5xx)
+      throw new Error(data.error || 'Request failed');
+    }
+    return data;
+  })
+  .then(data => {
+    if (data.success) {
+      showSuccess(data.message || 'Email verified successfully!');
+    } else {
+      showError(data.error || 'Email confirmation failed');
+    }
+  })
+  .catch(err => {
+    showError(err.message || 'An error occurred. Please try again.');
+  });
+}
+
+
+
+    // Initial verification
+    verifyToken();
+
+    // Retry handler
+    retryButton.addEventListener('click', () => {
+      statusDiv.innerHTML = `
+        <div class="spinner"></div>
+        <p>Please wait while we try again</p>
+      `;
+      statusDiv.className = 'loading';
+      errorActions.classList.add('hidden');
+      verifyToken();
+    });
+  </script>
+</body>
+</html>

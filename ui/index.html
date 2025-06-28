@@ -1,0 +1,12 @@
+<script>
+    // Fetch and display dashboard data
+    <script>
+  fetch('/api/auth/status', { credentials: 'include' })
+    .then(res => {
+      if (res.status !== 200) {
+        window.location.href = '/auth/login.html';
+      }
+    });
+</script>
+
+  </script>

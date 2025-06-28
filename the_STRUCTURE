@@ -48,6 +48,20 @@ authentique/
 │       ├── db.js               # DB connector
 │       └── query-builder.js    # SQL helper
 │
+├── **ui/**                    # NEW: Frontend assets
+│   ├── public/                # Static files (CSS, images)
+│   ├── src/
+│   │   ├── components/        # Reusable auth components
+│   │   │   ├── LoginForm.jsx
+│   │   │   ├── SignupForm.jsx
+│   │   │   └── PasswordReset.jsx
+│   │   ├── pages/             # Full page layouts
+│   │   │   ├── login.jsx
+│   │   │   └── signup.jsx
+│   │   ├── hooks/             # Custom hooks (e.g., useAuth)
+│   │   └── main.jsx           # Entry point
+│   ├── vite.config.js         # Frontend build config
+│   └── package.json           # Frontend deps (React, etc.)
 ├── **tests/**
 │   ├── unit/                   # Service tests
 │   ├── integration/            # Route tests

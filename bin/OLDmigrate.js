@@ -7,11 +7,10 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import chalk from 'chalk';
 import fs from 'fs/promises';
+import mysql from 'mysql2/promise';
 
 import databaseConfig from '../config/databases.js';
 import config from '../config/authentique.config.js';
-
-// Import your new MySQL adapter factory or getter
 import { getDatabaseAdapter } from '../src/adapters/databases/database-adapter.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -28,9 +27,31 @@ const args = process.argv.slice(2);
 const command = args[0] || 'run';
 const rollbackSteps = args[1] ? Number(args[1]) : 1;
 
+async function testConnection(mysqlConfig) {
+  try {
+    const connection = await mysql.createConnection({
+      host: mysqlConfig.host,
+      user: mysqlConfig.user,
+      password: mysqlConfig.password,
+      database: mysqlConfig.database,
+      port: mysqlConfig.port || 3306,
+      ssl: false
+    });
+
+    const [rows] = await connection.execute('SELECT 1');
+    console.log(colors.success('✅ Direct connection test OK:'), rows);
+    await connection.end();
+  } catch (error) {
+    console.error(colors.error('❌ Direct connection test failed:'), error);
+    process.exit(1);
+  }
+}
+
 const mysqlConfig = databaseConfig.mysql;
 
 console.log(colors.info('MySQL config loaded at runtime:'), mysqlConfig);
+
+await testConnection(mysqlConfig);
 
 async function runMigrations() {
   let db;

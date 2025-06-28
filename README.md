@@ -29,7 +29,7 @@ npm install authentique
 Run interactive setup:
 
 ```bash
-npx authentique-init
+npm run setup
 ```
 
 You’ll be prompted for:
@@ -87,103 +87,135 @@ ls config/
 # env-loader.js
 ```
 
----
+## 📦 Database Migrations
 
-## 📚 Database Migrations
+Authentique uses a simple migration system to manage your database schema over time. Migrations are organized by adapter in:
 
-### 📂 Migration Files Location
+```
+src/adapters/databases/<adapter>/migrations/
+```
 
-Migrations are stored in:
+For example for MySQL:
 
 ```
 src/adapters/databases/mysql/migrations/
 ```
 
-Each file follows this naming convention:
-
-```
-0001-initial-schema.js
-0002-add-columns.js
-```
+Each migration file must export an `up(pool)` function to apply changes, and optionally a `down(pool)` function to rollback.
 
 ---
 
-### 📑 Migration File Structure
+### 📜 Running Migrations
 
-Each migration exports two async functions:
-
-* `up(pool)` → applies changes
-* `down(pool)` → reverts them
-
----
-
-### 📖 Sample Migration File
-
-📄 **0001-initial-schema.js**
-
-```javascript
-export const up = async (pool) => {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      email VARCHAR(255) NOT NULL UNIQUE,
-      password_hash VARCHAR(255) NOT NULL
-    );
-  `);
-};
-
-export const down = async (pool) => {
-  await pool.query(`DROP TABLE IF EXISTS users`);
-};
-```
-
----
-
-### 📢 Running Migrations
-
-Run migrations via:
+To run all pending migrations:
 
 ```bash
 npx authentique-migrate
 ```
 
-Authentique will:
+This will:
 
-* Load environment variables
-* Connect using the selected database adapter
-* Run all `up()` migration files sequentially
-
----
-
-## 🖥️ Start Development Servers
-
-```bash
-npm run setup
-```
-
-Launches:
-
-* API server: `http://localhost:3001`
-* Auth UI: `http://localhost:3000`
+* Check for a `migrations` table (and create it if missing)
+* Find all `.js` migration files in the adapter’s `migrations/` directory
+* Skip any migrations already logged in the `migrations` table
+* Run pending migrations sequentially
+* Log each applied migration into the `migrations` table
 
 ---
 
-## 🛠️ Troubleshooting
+### 🔙 Rolling Back Migrations
 
-**Permissions issue?**
-
-```bash
-npm run prepare
-```
-
-**Migration errors?**
+To rollback the **latest migration**:
 
 ```bash
 npx authentique-migrate rollback
-npx authentique-migrate
+```
+
+To rollback a specific number of recent migrations:
+
+```bash
+npx authentique-migrate rollback <number>
+```
+
+**Examples:**
+
+* Rollback the last 1 migration:
+
+  ```bash
+  npx authentique-migrate rollback
+  ```
+
+* Rollback the last 3 migrations:
+
+  ```bash
+  npx authentique-migrate rollback 3
+  ```
+
+* Rollback all applied migrations:
+
+  ```bash
+  npx authentique-migrate rollback 999
+  ```
+
+**Note:** Only migrations with a `down(pool)` function can be rolled back. Migrations without one will be skipped with a warning.
+
+---
+
+### 📄 Example Migration File for MySQL
+
+```javascript
+// src/adapters/databases/mysql/migrations/0001-create-users.js
+
+export async function up(pool) {
+  await pool.query(`
+    CREATE TABLE users (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      email VARCHAR(255) UNIQUE NOT NULL
+    )
+  `);
+}
+
+export async function down(pool) {
+  await pool.query(`DROP TABLE IF EXISTS users`);
+}
 ```
 
 ---
+
+### ✅ Migration Logging
+
+* Applied migrations are tracked in a `migrations` table:
+
+  ```sql
+  SELECT * FROM migrations;
+  ```
+* Each entry records the migration filename and when it was run.
+
+---
+
+## 📦 Database Migration Commands
+
+| Command                                     | Description                                                         | Example                                |
+| :------------------------------------------ | :------------------------------------------------------------------ | :------------------------------------- |
+| `npx authentique-migrate`                   | Runs all pending migrations not yet recorded in the migrations log. | `npx authentique-migrate`              |
+| `npx authentique-migrate rollback`          | Rolls back the latest applied migration.                            | `npx authentique-migrate rollback`     |
+| `npx authentique-migrate rollback <number>` | Rolls back the specified number of latest applied migrations.       | `npx authentique-migrate rollback 2`   |
+| `npx authentique-migrate rollback 999`      | Rolls back **all** applied migrations (safe upper limit).           | `npx authentique-migrate rollback 999` |
+
+---
+
+## 📂 Migrations Directory Structure
+
+Migrations are stored per adapter:
+
+```
+src/adapters/databases/<adapter>/migrations/
+```
+
+
+
+
+
 
 ## ✅ Next Steps
 
