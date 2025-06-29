@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Constants for API path
     const PATHS = {
-        FORGOT_PASSWORD_API: `${AppConfig.BASE_URL}/api/forgot-password`,, // Assuming backend is on 3000
+        FORGOT_PASSWORD_API: `${AppConfig.BASE_URL}/api/forgot-password`, // Assuming backend is on 3000
         LOGIN_PAGE: '/login' // Assuming your login page is at /login
     };
 
