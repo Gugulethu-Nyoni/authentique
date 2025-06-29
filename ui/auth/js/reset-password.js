@@ -1,11 +1,10 @@
-import AppConfig from '../../config.js'; // adjust path relative to file
 // ui/auth/js/reset-password.js
 document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ Reset Password script initialized');
 
     // Constants
     const PATHS = {
-        RESET_PASSWORD_API: `${AppConfig.BASE_URL}/api/reset-password`, // Backend API endpoint
+        RESET_PASSWORD_API: 'http://localhost:3000/api/reset-password', // Backend API endpoint
         LOGIN_PAGE: '/auth/login.html' // Your login page
     };
 

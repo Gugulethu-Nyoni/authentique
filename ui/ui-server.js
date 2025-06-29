@@ -35,13 +35,8 @@ app.get('/health', (req, res) => {
 const proxyRequest = async (req, res, options) => {
   try {
     const { url, method = 'GET', headers = {}, body } = options;
-    const backendResponse = await fetch(url, {
-      method,
-      headers,
-      body
-    });
+    const backendResponse = await fetch(url, { method, headers, body });
 
-    // Forward Set-Cookie header if present
     const setCookieHeader = backendResponse.headers.get('Set-Cookie');
     if (setCookieHeader) {
       console.log('➡️ Forwarding Set-Cookie header from backend.');
@@ -88,8 +83,8 @@ app.post(['/api/login', '/api/signup', '/api/logout'], async (req, res) => {
   await proxyRequest(req, res, {
     url: `http://localhost:3000${req.originalUrl}`,
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' }, // This header might not always be needed for logout
-    body: JSON.stringify(req.body) // For logout, req.body might be empty, but stringify still works
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req.body)
   });
 });
 
@@ -125,27 +120,23 @@ app.use('/api', createGuard(), async (req, res) => {
   });
 });
 
-// Static asset routes
+// ✅ Static asset routes (NOTE: order matters — before 404 fallbacks)
 app.use('/assets', express.static(path.join(uiRoot, 'assets')));
-app.use('/auth', express.static(path.join(uiRoot, 'auth')));
-app.use('/dashboard', createGuard(), express.static(path.join(uiRoot, 'dashboard')));
 app.use('/css', express.static(path.join(uiRoot, 'css')));
 app.use('/js', express.static(path.join(uiRoot, 'js')));
+app.use('/auth', express.static(path.join(uiRoot, 'auth')));
+app.use('/dashboard', createGuard(), express.static(path.join(uiRoot, 'dashboard')));
 
-
-// ⭐ NEW: Route to serve reset-password.html
-// This MUST come BEFORE the general 404 fallback
+// Page routes for reset-password, confirm-email etc.
 app.get('/reset-password', (req, res) => {
-    console.log('Serving reset-password.html');
-    res.sendFile(path.join(uiRoot, 'auth/reset-password.html')); // Assuming it's in ui/auth/
+  console.log('Serving reset-password.html');
+  res.sendFile(path.join(uiRoot, 'auth/reset-password.html'));
 });
 
-// ⭐ Also ensure your confirm-email route is handled, if applicable
 app.get('/confirm-email', (req, res) => {
-    console.log('Serving confirm-email.html');
-    res.sendFile(path.join(uiRoot, 'auth/confirm-email.html')); // Assuming it's in ui/auth/
+  console.log('Serving confirm-email.html');
+  res.sendFile(path.join(uiRoot, 'auth/confirm-email.html'));
 });
-
 
 // Auth 404 fallback
 app.use('/auth', (req, res) => {
@@ -153,7 +144,7 @@ app.use('/auth', (req, res) => {
   res.status(404).sendFile(path.join(uiRoot, 'auth/404.html'));
 });
 
-// General 404 fallback
+// General 404 fallback (last)
 app.use((req, res) => {
   console.log('➡️ Route not found - redirecting to login');
   res.redirect('/auth/login.html');
