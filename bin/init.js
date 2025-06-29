@@ -83,9 +83,8 @@ export default {
   await fs.writeFile(path.join(configDir, 'authentique.config.js'), configContent);
 
   console.log(`
-✅ Configuration complete!
+✅ Configuration generated and saved at:
 
-Generated:
 - config/authentique.config.js ✅
 
 ✔️ Environment variables loaded from your .env file
