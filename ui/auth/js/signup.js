@@ -1,7 +1,7 @@
 import { showFieldError, clearFieldErrors, showAlert } from './ui-feedback.js';
 import AppConfig from './config.js';
 
-console.log(AppConfig.BASE_URL);
+//console.log(AppConfig.BASE_URL);
 
 // Password visibility toggle
 document.querySelector('.password-toggle').addEventListener('click', function() {
