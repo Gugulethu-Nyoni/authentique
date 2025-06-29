@@ -1,18 +1,16 @@
-// config.js - Environment and Base URLs configs
 const AppConfig = {
-  // Auto-detect environment (or manually set: 'development'/'production')
-  ENV: window.location.hostname.includes('localhost') ? 'development' : 'production',
-  
-  // Base URLs
+  ENV: (typeof window !== 'undefined' && window.location.hostname.includes('localhost'))
+    ? 'development'
+    : 'production',
+
   BASE_URLS: {
-    development: 'http://localhost:3000',      // Dev API
-    production: 'https://api.botaniqsa.com'    // Live API (use HTTPS!)
+    development: 'http://localhost:3000',
+    production: 'https://api.botaniqsa.com'
   },
-  
-  // Get current base URL
+
   get BASE_URL() {
-    return this.BASE_URLS[this.ENV] || this.BASE_URLS.development; // Fallback to dev
+    return this.BASE_URLS[this.ENV] || this.BASE_URLS.development;
   }
 };
 
-export default AppConfig; // Exports as an ES Module
+export default AppConfig;
