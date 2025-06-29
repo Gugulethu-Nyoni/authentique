@@ -1,4 +1,4 @@
-import { signupUser, loginUser } from '../../services/auth/service.js';
+import { signupUser, loginUser, initiatePasswordReset, resetUserPassword } from '../../services/auth/service.js';
 import { emailService } from '../../services/email.js';
 import { successResponse, errorResponse } from '../utils/response.js';
 import jwt from 'jsonwebtoken';
