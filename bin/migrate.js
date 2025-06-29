@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Ensure environment is loaded first
-import '../config/env-loader.js';
+//import '../config/env-loader.js';
 
 import path from 'path';
 import { fileURLToPath } from 'url';

@@ -110,7 +110,7 @@ Each migration file must export an `up(pool)` function to apply changes, and opt
 To run all pending migrations:
 
 ```bash
-npx authentique-migrate
+npm run migrate
 ```
 
 This will:
@@ -128,13 +128,13 @@ This will:
 To rollback the **latest migration**:
 
 ```bash
-npx authentique-migrate rollback
+npm run migrate:rollback
 ```
 
 To rollback a specific number of recent migrations:
 
 ```bash
-npx authentique-migrate rollback <number>
+npm run migrate:rollback <number>
 ```
 
 **Examples:**
@@ -142,19 +142,19 @@ npx authentique-migrate rollback <number>
 * Rollback the last 1 migration:
 
   ```bash
-  npx authentique-migrate rollback
+  npm run migrate:rollback
   ```
 
 * Rollback the last 3 migrations:
 
   ```bash
-  npx authentique-migrate rollback 3
+  npm run migrate:rollback 3
   ```
 
 * Rollback all applied migrations:
 
   ```bash
-  npx authentique-migrate rollback 999
+  npm run migrate:rollback 999
   ```
 
 **Note:** Only migrations with a `down(pool)` function can be rolled back. Migrations without one will be skipped with a warning.

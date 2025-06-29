@@ -87,8 +87,7 @@ export default {
 
 - config/authentique.config.js ✅
 
-✔️ Environment variables loaded from your .env file
-✔️ Remember to set up your 'config/databases.js' and 'config/auth.js' modules separately.
+✔️ Remember to uodate up your 'config/databases.js' and 'config/auth.js' modules accordingly.
 `);
 }
 
