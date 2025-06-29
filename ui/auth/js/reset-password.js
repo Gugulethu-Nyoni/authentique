@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Constants
     const PATHS = {
-        RESET_PASSWORD_API: `${AppConfig.BASE_URL}/api/forgot-password`, // Backend API endpoint
+        RESET_PASSWORD_API: `${AppConfig.BASE_URL}/api/reset-password`, // Backend API endpoint
         LOGIN_PAGE: '/auth/login.html' // Your login page
     };
 
