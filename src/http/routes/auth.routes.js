@@ -6,7 +6,9 @@ import {
   validateSessionHandler,
   verifyTokenHandler,
   logoutHandler,
-  getUserProfileHandler  
+  getUserProfileHandler,
+  forgotPasswordHandler,
+  resetPasswordHandler
 } from '../controllers/authController.js';
 
 import { authenticateToken } from '../middleware/authenticate.js'; // <-- Correct Import Path
@@ -24,6 +26,14 @@ router.post('/api/login', loginHandler);
 
 // NEW: Logout route
 router.post('/api/logout', logoutHandler); // Or router.get('/api/logout', logoutHandler); if you prefer GET
+
+// ✅ NEW: Forgot password (request reset link)
+router.post('/api/forgot-password', forgotPasswordHandler);
+
+// ✅ NEW: Reset password (with token)
+router.post('/api/reset-password', resetPasswordHandler);
+
+
 
 
 router.use(authenticateToken); // <-- Apply here

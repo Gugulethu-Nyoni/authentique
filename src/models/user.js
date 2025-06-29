@@ -53,3 +53,34 @@ export const findUserById = async (id) => {
     return rows[0]; // Returns the first row (user) or undefined
 };
 
+// ✅ UPDATED: Store password reset token (using schema names)
+export const storePasswordResetToken = async (userId, token, expiresAt) => {
+    await db.query(
+        `UPDATE users
+         SET reset_token = ?,
+             reset_token_expires_at = ?
+         WHERE id = ?`,
+        [token, expiresAt, userId]
+    );
+};
+
+// ✅ UPDATED: Find user by password reset token (using schema names)
+export const findUserByPasswordResetToken = async (token) => {
+    const rows = await db.query(
+        'SELECT * FROM users WHERE reset_token = ? AND reset_token_expires_at > NOW()',
+        [token]
+    );
+    return rows[0];
+};
+
+// ✅ UPDATED: Update user password and clear reset token (using schema names)
+export const updatePasswordAndClearResetToken = async (userId, newPasswordHash) => {
+    await db.query(
+        `UPDATE users
+         SET password_hash = ?,
+             reset_token = NULL,
+             reset_token_expires_at = NULL
+         WHERE id = ?`,
+        [newPasswordHash, userId]
+    );
+};

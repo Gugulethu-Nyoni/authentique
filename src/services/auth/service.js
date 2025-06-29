@@ -1,7 +1,8 @@
 import { findUserByEmail, createUser } from '../../models/user.js';
 import { hashPassword } from '../password.js';
-import { generateVerificationToken } from './strategies/jwt.js';
-import { generateAuthToken } from './strategies/jwt.js';
+//import { generateVerificationToken } from './strategies/jwt.js';
+//import { generateAuthToken } from './strategies/jwt.js';
+import { generateVerificationToken, generateAuthToken, generatePasswordResetToken } from './strategies/jwt.js'; // Ensure generatePasswordResetToken is imported
 import { comparePassword } from '../password.js';
 
 
@@ -54,4 +55,36 @@ export const loginUser = async ({ email, password }) => {
   const token = generateAuthToken({ userId: user.id, email: user.email });
 
   return { user: { id: user.id, email: user.email, name: user.name }, token };
+};
+
+
+// ✅ NEW: Initiate password reset
+export const initiatePasswordReset = async (email) => {
+    const user = await findUserByEmail(email);
+    if (!user) {
+        // For security, do not reveal if the email is not registered.
+        // Still return success to prevent email enumeration attacks.
+        console.warn(`[PASSWORD_RESET] Attempt to reset password for non-existent email: ${email}`);
+        return { success: true };
+    }
+
+    const { token, expiresAt } = generatePasswordResetToken({ userId: user.id });
+
+    await storePasswordResetToken(user.id, token, expiresAt);
+
+    return { email: user.email, name: user.name || 'User', token };
+};
+
+// ✅ NEW: Complete password reset
+export const resetUserPassword = async (token, newPassword) => {
+    const user = await findUserByPasswordResetToken(token);
+
+    if (!user) {
+        throw new Error('Invalid or expired password reset token.');
+    }
+
+    const newPasswordHash = await hashPassword(newPassword);
+    await updatePasswordAndClearResetToken(user.id, newPasswordHash);
+
+    return { userId: user.id, email: user.email };
 };

@@ -36,8 +36,8 @@ async function fetchUserProfile() {
 function displayUserProfile(profile) {
     const dashboardData = document.getElementById('dashboard-data');
     dashboardData.innerHTML = `
-        <p><strong>Email:</strong> ${profile.email}</p>
-        <p><strong>Name:</strong> ${profile.name || 'Not set'}</p>
+        <!-- <p><strong>Email:</strong> ${profile.email}</p> -->
+        <p><strong> Hi </strong> ${profile.name || 'Not set'}</p>
         `;
 }
 
@@ -70,3 +70,7 @@ document.addEventListener('DOMContentLoaded', fetchUserProfile);
 
 // Make logout globally accessible (since it's called from onclick)
 window.logout = logout;
+
+
+
+

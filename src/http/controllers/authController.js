@@ -186,3 +186,51 @@ export const logoutHandler = (req, res) => {
     }
 };
 
+
+// ✅ NEW: Handle forgot password request (send reset link)
+export const forgotPasswordHandler = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return errorResponse(res, 'Email is required.', 400);
+        }
+
+        const { name, token } = await initiatePasswordReset(email);
+
+        // Always send a success response to prevent email enumeration,
+        // even if the email doesn't exist in the database.
+        // The actual email sending logic will handle if the user exists.
+        if (token) { // Only send email if a token was generated (meaning user exists)
+            await emailService.sendPasswordResetEmail({
+                to: email,
+                name: name,
+                token: token
+            });
+        }
+        
+        return successResponse(res, 'If an account with that email exists, a password reset link has been sent.', null, 200);
+
+    } catch (err) {
+        console.error('[AUTH] Forgot password error:', err);
+        return errorResponse(res, err.message || 'Failed to initiate password reset.', 500);
+    }
+};
+
+// ✅ NEW: Handle actual password reset (with token)
+export const resetPasswordHandler = async (req, res) => {
+    try {
+        const { token, newPassword } = req.body;
+        if (!token || !newPassword) {
+            return errorResponse(res, 'Token and new password are required.', 400);
+        }
+
+        await resetUserPassword(token, newPassword);
+
+        return successResponse(res, 'Password has been reset successfully.', null, 200);
+
+    } catch (err) {
+        console.error('[AUTH] Reset password error:', err);
+        return errorResponse(res, err.message || 'Failed to reset password.', 500);
+    }
+};
+

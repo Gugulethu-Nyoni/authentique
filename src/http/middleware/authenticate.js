@@ -1,7 +1,7 @@
 // src/http/middleware/authenticate.js
 import jwt from 'jsonwebtoken';
-import config from '../../../../config/auth.js'; // Adjust path based on where you use it
-import { errorResponse } from '../controllers/utils/response.js'; // Adjust path if utils is elsewhere
+import config from '../../../config/auth.js'; // Adjust path based on where you use it
+import { errorResponse } from '../utils/response.js'; // Adjust path if utils is elsewhere
 
 export const authenticateToken = (req, res, next) => {
     const token = req.cookies.auth_token;
