@@ -1,10 +1,7 @@
-//console.log('signup.js loaded');
 import { showFieldError, clearFieldErrors, showAlert } from './ui-feedback.js';
-import AppConfig from '../../config.js';
+import AppConfig from './config.js';
 
-console.log('Environment:', AppConfig.ENV);
-console.log('API Base URL:', AppConfig.BASE_URL);
-
+console.log(AppConfig.BASE_URL);
 
 // Password visibility toggle
 document.querySelector('.password-toggle').addEventListener('click', function() {
