@@ -142,11 +142,8 @@ export class EmailService {
     </html>`;
   }
 
-  ---
 
-  ### **New: Send Password Reset Email**
 
-  ```javascript
   async sendPasswordResetEmail({ to, name, token }) {
     const resetUrl = `${process.env.UI_BASE_URL}/reset-password?token=${token}`; // Assuming '/reset-password' is the path in your UI
     const subject = `Reset Your ${process.env.BRAND_NAME} Password`;
