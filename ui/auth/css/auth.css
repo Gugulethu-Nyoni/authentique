@@ -9,6 +9,8 @@
   --success: #ffffff;
   --text: #adb5bd;
   --bg: #1a1a1a;
+  --bg-hover:#9370db;
+
 }
 
 
@@ -41,12 +43,13 @@
 */
 
 :root {
-  --primary: #9370db;
-  --error: #ff69b4;
+  --primary: #ff69b4;
+  --error: #9370db;
   --success: #ffffff;
-  --text: #7c8288;
-  --bg: #0f0f13;
-  --bg-hover:#ff69b4;
+  --text: #adb5bd;
+  --bg: #1a1a1a;
+  --bg-hover:#9370db;
+
 }
 
 /* Base Styles */

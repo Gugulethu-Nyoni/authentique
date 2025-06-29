@@ -218,6 +218,47 @@ src/adapters/databases/<adapter>/migrations/
 
 **Note:** All you need to do to set up Authentique UI is to update the variables in the `config.js` file — that’s it.
 
+Perfect — here’s your clean, updated **feature-based directory structure section** for the README, reflecting your exact latest layout, with `OLDindex.html` removed and `project/` replaced with `ui/` as requested:
+
+---
+
+## 📁 Project Directory Structure
+
+Authentique UI follows a **feature-based directory structure** for clarity and scalability:
+
+```
+ui/
+├── auth/
+│   ├── confirm.html
+│   ├── email-confirmation.html
+│   ├── forgot-password.html
+│   ├── index.html
+│   ├── login.html
+│   ├── reset-password.html
+│   ├── signup.html
+│   ├── verify-email.html
+│   ├── css/
+│   └── js/
+│       ├── config.js               # UI runtime config (API endpoints & environment)
+│       ├── login.js                # Login form logic
+│       ├── signup.js               # Signup form logic
+│       ├── forgot-password.js      # Forgot password form logic
+│       └── reset-password.js       # Password reset form logic
+├── dashboard/
+│   ├── account.html
+│   ├── css/
+│   ├── index.html
+│   └── js/
+├── node_modules/
+├── package-lock.json
+├── package.json
+├── server/
+│   ├── middleware/
+│   ├── routes/
+│   └── test.js
+└── ui-server.js                    # Express UI server with API proxy routes
+```
+
 ---
 
 ## ⚙️ UI Capabilities
