@@ -44,3 +44,8 @@ export const verifyUserById = async (userId) => {
     [userId]
   );
 };
+
+export const findUserById = async (id) => {
+    const [rows] = await pool.execute('SELECT id, email, name FROM users WHERE id = ?', [id]);
+    return rows[0]; // Returns the first row (user) or undefined
+};

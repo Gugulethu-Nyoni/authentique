@@ -1,5 +1,13 @@
 import express from 'express';
-import { signupHandler, confirmEmailHandler,loginHandler } from '../controllers/authController.js';
+import { 
+  signupHandler,
+  confirmEmailHandler,
+  loginHandler,
+  validateSessionHandler,
+  verifyTokenHandler,
+  logoutHandler,
+  getUserProfileHandler  
+} from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -9,7 +17,17 @@ router.post('/api/signup', signupHandler);
 // Email confirmation route
 router.post('/auth/confirm', confirmEmailHandler);
 
-//login route
+// Login route
 router.post('/api/login', loginHandler);
+
+// Session validation (existing)
+router.get('/api/validate-session', validateSessionHandler);
+
+// NEW: Token verification endpoint for UI proxy
+router.get('/api/verify-token', verifyTokenHandler);
+
+router.get('/api/user/profile', getUserProfileHandler); // This route MUST be protected by a middleware!
+// NEW: Logout route
+router.post('/api/logout', logoutHandler); // Or router.get('/api/logout', logoutHandler); if you prefer GET
 
 export default router;
