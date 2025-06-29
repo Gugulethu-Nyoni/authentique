@@ -45,7 +45,11 @@ export const verifyUserById = async (userId) => {
   );
 };
 
+
+
 export const findUserById = async (id) => {
-    const [rows] = await pool.execute('SELECT id, email, name FROM users WHERE id = ?', [id]);
+    // Ensure this uses the 'db' instance you've initialized
+    const rows = await db.query('SELECT id, email, name FROM users WHERE id = ?', [id]);
     return rows[0]; // Returns the first row (user) or undefined
 };
+

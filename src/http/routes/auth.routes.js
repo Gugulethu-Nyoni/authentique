@@ -9,6 +9,8 @@ import {
   getUserProfileHandler  
 } from '../controllers/authController.js';
 
+import { authenticateToken } from '../middleware/authenticate.js'; // <-- Correct Import Path
+
 const router = express.Router();
 
 // Signup route
@@ -20,14 +22,17 @@ router.post('/auth/confirm', confirmEmailHandler);
 // Login route
 router.post('/api/login', loginHandler);
 
-// Session validation (existing)
-router.get('/api/validate-session', validateSessionHandler);
-
-// NEW: Token verification endpoint for UI proxy
-router.get('/api/verify-token', verifyTokenHandler);
-
-router.get('/api/user/profile', getUserProfileHandler); // This route MUST be protected by a middleware!
 // NEW: Logout route
 router.post('/api/logout', logoutHandler); // Or router.get('/api/logout', logoutHandler); if you prefer GET
+
+
+router.use(authenticateToken); // <-- Apply here
+// BELOW ARE ROUTES THAT REQUIRE (use) authenticateToken
+
+// Session validation (existing)
+router.get('/api/validate-session', validateSessionHandler);
+// NEW: Token verification endpoint for UI proxy
+router.get('/api/verify-token', verifyTokenHandler);
+router.get('/api/user/profile', getUserProfileHandler); // This route MUST be protected by a middleware!
 
 export default router;
