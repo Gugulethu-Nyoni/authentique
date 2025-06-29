@@ -15,4 +15,4 @@ const AppConfig = {
   }
 };
 
-export default AppConfig;
+export default AppConfig; // Exports as an ES Module
