@@ -130,6 +130,21 @@ app.use('/assets', express.static(path.join(uiRoot, 'assets')));
 app.use('/auth', express.static(path.join(uiRoot, 'auth')));
 app.use('/dashboard', createGuard(), express.static(path.join(uiRoot, 'dashboard')));
 
+
+// ⭐ NEW: Route to serve reset-password.html
+// This MUST come BEFORE the general 404 fallback
+app.get('/reset-password', (req, res) => {
+    console.log('Serving reset-password.html');
+    res.sendFile(path.join(uiRoot, 'auth/reset-password.html')); // Assuming it's in ui/auth/
+});
+
+// ⭐ Also ensure your confirm-email route is handled, if applicable
+app.get('/confirm-email', (req, res) => {
+    console.log('Serving confirm-email.html');
+    res.sendFile(path.join(uiRoot, 'auth/confirm-email.html')); // Assuming it's in ui/auth/
+});
+
+
 // Auth 404 fallback
 app.use('/auth', (req, res) => {
   console.log('❌ Auth route not found - 404');
