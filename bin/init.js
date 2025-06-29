@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 import inquirer from 'inquirer';
 import fs from 'fs/promises';
 import path from 'path';
@@ -33,79 +34,63 @@ const questions = [
   }
 ];
 
-async function generateConfig(answers) {
-  // Create config directory if needed
-  await fs.mkdir(path.join(process.cwd(), 'config'), { recursive: true });
+async function runInit() {
+  // Verify .env exists
+  try {
+    await fs.access(path.join(process.cwd(), '.env'));
+  } catch {
+    console.error('❌ Error: .env file not found. Please create it first.');
+    process.exit(1);
+  }
 
-  // Generate master config
-  const config = {
-    database: {
-      adapter: answers.database.toLowerCase(),
-      config: `config/databases.js`  // Matches your existing structure
-    },
-    email: {
-      provider: answers.emailService,
-      config: `config/auth.js`  // Matches your existing structure
-    },
-    features: {
-      ui: answers.includeUI
-    }
-  };
+  const answers = await inquirer.prompt(questions);
 
-  // Write config files that work with your .env
-  await Promise.all([
-  fs.writeFile(
-    path.join(process.cwd(), 'config', 'authentique.config.js'),
-    `import databaseConfig from '../config/databases.js';\nimport emailConfig from '../config/auth.js';\n\nexport default ${JSON.stringify(config, null, 2)}`
-  ),
-  fs.writeFile(
-    path.join(process.cwd(), 'config', 'databases.js'),
-    `export default {
-      ${answers.database.toLowerCase()}: {
-        host: process.env.DB_MYSQL_HOST,
-        port: process.env.DB_MYSQL_PORT,
-        user: process.env.DB_MYSQL_USER,
-        password: process.env.DB_MYSQL_PASSWORD,
-        database: process.env.DB_MYSQL_NAME,
-        poolLimit: process.env.DB_MYSQL_POOL_LIMIT
-      }
-    }`
-  ),
-  fs.writeFile(
-    path.join(process.cwd(), 'config', 'auth.js'),
-    `export default {
-      jwtSecret: process.env.JWT_SECRET,
-      jwtExpiry: process.env.JWT_ACCESS_EXPIRY,
-      emailDriver: process.env.EMAIL_DRIVER,
-      ${answers.emailService.toLowerCase()}: {
-        ${answers.emailService === 'Resend' ? 
-          'apiKey: process.env.RESEND_API_KEY' :
-          answers.emailService === 'Mailgun' ?
-          'apiKey: process.env.MAILGUN_API_KEY\ndomain: process.env.MAILGUN_DOMAIN' :
-          '/* Configure your email provider */'
-        }
-      }
-    }`
-  )
-]);
+  const configDir = path.join(process.cwd(), 'config');
+  await fs.mkdir(configDir, { recursive: true });
 
+  // Build authentique.config.js content with module references
+  const configContent = `import dotenv from 'dotenv';
+dotenv.config();
+
+import databaseConfig from './databases.js';
+import emailConfig from './auth.js';
+
+const isProd = process.env.NODE_ENV === 'production';
+
+export default {
+  env: process.env.NODE_ENV || 'development',
+  port: parseInt(process.env.PORT || '3000'),
+  baseUrl: process.env.BASE_URL || (isProd ? 'https://app.botaniqsa.com' : 'http://localhost:3000'),
+  brand: {
+    name: process.env.BRAND_NAME || 'Botaniq',
+    supportEmail: process.env.BRAND_SUPPORT_EMAIL || 'support@botaniqsa.com'
+  },
+  database: {
+    adapter: '${answers.database.toLowerCase()}',
+    config: databaseConfig['${answers.database.toLowerCase()}']
+  },
+  email: {
+    provider: '${answers.emailService}',
+    config: emailConfig
+  },
+  features: {
+    ui: ${answers.includeUI}
+  }
+};
+`;
+
+  // Write authentique.config.js
+  await fs.writeFile(path.join(configDir, 'authentique.config.js'), configContent);
 
   console.log(`
-  ✅ Configuration complete!
-  
-  Generated files:
-  - config/authentique.config.js (Main config)
-  - config/databases.js (DB connection)
-  - config/auth.js (Auth settings)
+✅ Configuration complete!
 
-  Using environment variables from your .env file
-  `);
+Generated:
+- config/authentique.config.js ✅
+
+✔️ Environment variables loaded from your .env file
+✔️ Remember to set up your 'config/databases.js' and 'config/auth.js' modules separately.
+`);
 }
 
-// Verify .env exists first
-fs.access(path.join(process.cwd(), '.env'))
-  .then(() => inquirer.prompt(questions).then(generateConfig))
-  .catch(() => {
-    console.error('Error: .env file not found. Please create it first.');
-    process.exit(1);
-  });
+runInit();

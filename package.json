@@ -3,21 +3,15 @@
   "version": "1.0.0",
   "description": "Framework-agnostic authentication stack with adapters for MySQL, Supabase, Mongodb and Sqlite and social providers",
   "type": "module",
-  "bin": {
-    "authentique-init": "./bin/init.js",
-    "authentique-migrate": "./bin/migrate.js"
-  },
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "start": "node examples/server.js",
     "dev": "nodemon --experimental-vm-modules examples/server.js",
     "typecheck": "tsc --noEmit",
-    "postinstall": "node -e \"import('fs').then(fs => fs.chmodSync('./bin/init.js', '755') && fs.chmodSync('./bin/migrate.js', '755'))\"",
-    "prepare": "npm run postinstall > /dev/null 2>&1",
-    "init": "authentique-init",
-    "migrate": "authentique-migrate run",
-    "migrate:rollback": "authentique-migrate rollback",
+    "init": "node ./bin/init.js",
+    "migrate": "node ./bin/migrate.js run",
+    "migrate:rollback": "node ./bin/migrate.js rollback",
     "migrate:refresh": "npm run migrate:rollback -- 999 && npm run migrate",
     "start-server": "concurrently \"node src/http/server.js\" \"node ui/ui-server.js\"",
     "setup": "npm run init && npm run migrate && npm run start-server"
