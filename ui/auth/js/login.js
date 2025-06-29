@@ -1,3 +1,6 @@
+import AppConfig from '../../config.js';
+
+
 document.addEventListener('DOMContentLoaded', () => {
   console.log('✅ Login script initialized');
 

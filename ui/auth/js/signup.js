@@ -1,7 +1,10 @@
+//console.log('signup.js loaded');
 import { showFieldError, clearFieldErrors, showAlert } from './ui-feedback.js';
 import AppConfig from '../../config.js';
 
-console.log(AppConfig);
+console.log('Environment:', AppConfig.ENV);
+console.log('API Base URL:', AppConfig.BASE_URL);
+
 
 // Password visibility toggle
 document.querySelector('.password-toggle').addEventListener('click', function() {
@@ -45,7 +48,7 @@ if (signupForm) {
   const payload = Object.fromEntries(formData.entries());
 
   try {
-    const res = await fetch('http://localhost:3000/api/signup', {
+    const res = await fetch(`${AppConfig.BASE_URL}/api/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
