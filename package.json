@@ -1,7 +1,7 @@
 {
   "name": "authentique",
   "version": "1.0.0",
-  "description": "Framework-agnostic authentication stack with adapters for multiple databases and social providers",
+  "description": "Framework-agnostic authentication stack with adapters for MySQL, Supabase, Mongodb and Sqlite and social providers",
   "type": "module",
   "bin": {
     "authentique-init": "./bin/init.js",
