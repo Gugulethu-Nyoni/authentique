@@ -1,10 +1,12 @@
+import AppConfig from './config.js';
+
 // ui/auth/js/forgot-password.js (or ui/src/js/forgot-password.js)
 document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ Forgot Password script initialized');
 
     // Constants for API path
     const PATHS = {
-        FORGOT_PASSWORD_API: 'http://localhost:3000/api/forgot-password', // Assuming backend is on 3000
+        FORGOT_PASSWORD_API: `${AppConfig.BASE_URL}/api/forgot-password`, // Assuming backend is on 3000
         LOGIN_PAGE: '/login' // Assuming your login page is at /login
     };
 
