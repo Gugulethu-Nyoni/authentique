@@ -1,4 +1,4 @@
-import AppConfig from '../../config.js';
+//import AppConfig from '../../config.js';
 
 
 document.addEventListener('DOMContentLoaded', () => {

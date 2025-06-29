@@ -129,6 +129,8 @@ app.use('/api', createGuard(), async (req, res) => {
 app.use('/assets', express.static(path.join(uiRoot, 'assets')));
 app.use('/auth', express.static(path.join(uiRoot, 'auth')));
 app.use('/dashboard', createGuard(), express.static(path.join(uiRoot, 'dashboard')));
+app.use('/css', express.static(path.join(uiRoot, 'css')));
+app.use('/js', express.static(path.join(uiRoot, 'js')));
 
 
 // ⭐ NEW: Route to serve reset-password.html
