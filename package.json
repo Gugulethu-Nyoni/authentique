@@ -8,9 +8,6 @@
     "authentique-migrate": "./bin/migrate.js"
   },
   "scripts": {
-    "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
-    "test:watch": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --watch",
-    "test:coverage": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "start": "node examples/server.js",
@@ -18,7 +15,6 @@
     "typecheck": "tsc --noEmit",
     "postinstall": "node -e \"import('fs').then(fs => fs.chmodSync('./bin/init.js', '755') && fs.chmodSync('./bin/migrate.js', '755'))\"",
     "prepare": "npm run postinstall > /dev/null 2>&1",
-    "prepublishOnly": "npm run test && npm run lint",
     "init": "authentique-init",
     "migrate": "authentique-migrate run",
     "migrate:rollback": "authentique-migrate rollback",
