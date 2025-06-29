@@ -212,10 +212,11 @@ Migrations are stored per adapter:
 src/adapters/databases/<adapter>/migrations/
 ```
 
-
 ## 📖 Authentique UI Configuration
 
 **Authentique UI** is a fully optional, lightweight user interface layer that ships alongside the **Authentique authentication package**. It provides a clean, modular, and extensible frontend to support full authentication workflows out of the box — without requiring a JavaScript framework.
+
+**Note:** All you need to do to set up Authentique UI is to update the variables in the `config.js` file — that’s it.
 
 ---
 
@@ -314,7 +315,7 @@ export default AppConfig;
 
 ## 📦 How Config Is Imported and Used
 
-Each Authentique UI module that requires access to backend API endpoints **imports `AppConfig` from the config file**.
+Each Authentique UI module that requires access to backend API endpoints **imports `AppConfig` from the config file**. So you don't need to do this - it s already taken care of - all you need to do is update the variaables in the config.js file. 
 
 Example:
 
