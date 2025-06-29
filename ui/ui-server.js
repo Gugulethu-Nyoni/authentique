@@ -1,4 +1,3 @@
-// ui-server.js
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import path from 'path';
@@ -13,8 +12,11 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-const uiRoot = path.join(__dirname, '../ui');
-console.log('📦 Serving UI files from:', uiRoot);
+console.log('📦 Serving UI files from project root:', __dirname);
+
+// ✅ Static asset routes (place these early!)
+app.use('/auth', express.static(path.join(__dirname, 'auth')));
+app.use('/dashboard', createGuard(), express.static(path.join(__dirname, 'dashboard')));
 
 // Debug logger middleware
 app.use((req, res, next) => {
@@ -29,9 +31,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'healthy' });
 });
 
-/**
- * Helper: Proxy a request to the backend API
- */
+// Helper: Proxy a request to the backend API
 const proxyRequest = async (req, res, options) => {
   try {
     const { url, method = 'GET', headers = {}, body } = options;
@@ -39,7 +39,6 @@ const proxyRequest = async (req, res, options) => {
 
     const setCookieHeader = backendResponse.headers.get('Set-Cookie');
     if (setCookieHeader) {
-      console.log('➡️ Forwarding Set-Cookie header from backend.');
       res.setHeader('Set-Cookie', setCookieHeader);
     }
 
@@ -59,15 +58,23 @@ const proxyRequest = async (req, res, options) => {
   }
 };
 
-// Token verification proxy
+// Public API proxies
+app.post(['/api/login', '/api/signup', '/api/logout'], async (req, res) => {
+  await proxyRequest(req, res, {
+    url: `http://localhost:3000${req.originalUrl}`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req.body)
+  });
+});
+
+// Token verification
 app.get('/api/verify-token', async (req, res) => {
   const token = req.cookies.auth_token;
   if (!token) {
-    console.log('❌ No token provided for verification');
     return res.status(401).json({ success: false, message: 'No authentication token provided' });
   }
 
-  console.log('🔒 Proxying token verification to auth server...');
   await proxyRequest(req, res, {
     url: 'http://localhost:3000/api/verify-token',
     headers: {
@@ -77,25 +84,13 @@ app.get('/api/verify-token', async (req, res) => {
   });
 });
 
-// Public API proxies (login, signup, logout)
-app.post(['/api/login', '/api/signup', '/api/logout'], async (req, res) => {
-  console.log(`🔀 Proxying public API request to backend: ${req.originalUrl}`);
-  await proxyRequest(req, res, {
-    url: `http://localhost:3000${req.originalUrl}`,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(req.body)
-  });
-});
-
-// Validate session proxy
+// Validate session
 app.get('/api/validate-session', async (req, res) => {
   const token = req.cookies.auth_token;
   if (!token) {
     return res.status(401).json({ success: false, message: 'No session token' });
   }
 
-  console.log('🔒 Proxying session validation to auth server...');
   await proxyRequest(req, res, {
     url: 'http://localhost:3000/api/validate-session',
     headers: {
@@ -105,9 +100,8 @@ app.get('/api/validate-session', async (req, res) => {
   });
 });
 
-// Protected API proxy routes (with guard)
+// Protected API proxy routes
 app.use('/api', createGuard(), async (req, res) => {
-  console.log(`🔀 Proxying protected API request: ${req.originalUrl}`);
   await proxyRequest(req, res, {
     url: `http://localhost:3000${req.originalUrl}`,
     method: req.method,
@@ -120,31 +114,7 @@ app.use('/api', createGuard(), async (req, res) => {
   });
 });
 
-// ✅ Static asset routes (NOTE: order matters — before 404 fallbacks)
-app.use('/assets', express.static(path.join(uiRoot, 'assets')));
-app.use('/css', express.static(path.join(uiRoot, 'css')));
-app.use('/js', express.static(path.join(uiRoot, 'js')));
-app.use('/auth', express.static(path.join(uiRoot, 'auth')));
-app.use('/dashboard', createGuard(), express.static(path.join(uiRoot, 'dashboard')));
-
-// Page routes for reset-password, confirm-email etc.
-app.get('/reset-password', (req, res) => {
-  console.log('Serving reset-password.html');
-  res.sendFile(path.join(uiRoot, 'auth/reset-password.html'));
-});
-
-app.get('/confirm-email', (req, res) => {
-  console.log('Serving confirm-email.html');
-  res.sendFile(path.join(uiRoot, 'auth/confirm-email.html'));
-});
-
-// Auth 404 fallback
-app.use('/auth', (req, res) => {
-  console.log('❌ Auth route not found - 404');
-  res.status(404).sendFile(path.join(uiRoot, 'auth/404.html'));
-});
-
-// General 404 fallback (last)
+// General 404 fallback
 app.use((req, res) => {
   console.log('➡️ Route not found - redirecting to login');
   res.redirect('/auth/login.html');
@@ -153,7 +123,7 @@ app.use((req, res) => {
 // Error handler
 app.use((err, req, res, next) => {
   console.error('💥 Server error:', err);
-  res.status(500).sendFile(path.join(uiRoot, 'auth/500.html'));
+  res.status(500).send('Internal Server Error');
 });
 
 // Start server
