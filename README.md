@@ -348,24 +348,29 @@ This ensures your frontend modules automatically target the correct API environm
 
 If necessary, you can extend the `BASE_URLS` object for additional environments as required for your own project.
 
----
-
-✅ This setup ensures your Authentique UI and backend remain cleanly decoupled, environment-aware, and highly secure.
+Sure — here’s a clean, refined, and clear markdown section for your README that avoids re-showing the full config code while explaining the dashboard config neatly:
 
 ---
 
-Would you like me to draft a companion section explaining **how to add a new environment config (e.g. QA or test env)**, or detail **the proxy route pattern in the UI server** as well?
+### **Authentique UI Dashboard**
 
+The default URL for the Authentique dashboard is set via the `DASHBOARD` variable in the `config.js` file:
 
+```javascript
+DASHBOARD: '/dashboard/index.html',
+```
 
+You can customize this path to point to your preferred dashboard location if needed. The `config.js` file also manages environment-specific settings and API base URLs, making it simple to configure your application for both development and production environments.
 
+**Note:** If you change the dashboard directory, you’ll also need to update the `authentique/ui/server/routes/dashboard.routes.js` file to reflect the new directory:
 
-## ✅ Next Steps
+```javascript
+export default function (app, serveDirectory) {
+  serveDirectory('dashboard', '/dashboard', true); // any logged-in user
+}
+```
 
-* Access dashboard via `http://localhost:3000`
-* Test API endpoints
-* Customize auth flows in `config/auth.js`
-* Create your own migrations in
-  `src/adapters/databases/mysql/migrations/`
+This function tells the UI server to serve all routes and files within the specified directory without needing to define individual routes for each file — ensuring seamless access for authenticated users.
+
 
 

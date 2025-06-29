@@ -30,6 +30,8 @@ const AppConfig = {
     production: 'https://api.botaniqsa.com'
   },
 
+  DASHBOARD: '/dashboard/index.html',
+
   /**
    * Returns the base API URL for the current environment
    */

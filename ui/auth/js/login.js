@@ -1,12 +1,11 @@
-//import AppConfig from '../../config.js';
-
+import AppConfig from './config.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('✅ Login script initialized');
 
   // Constants
   const PATHS = {
-    DASHBOARD: '/dashboard/index.html',
+    DASHBOARD: `${AppConfig.DASHBOARD}`,
     LOGIN_API: '/api/login',
     VALIDATE_SESSION: '/api/validate-session'
   };
