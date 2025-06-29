@@ -1,10 +1,52 @@
 /* Core Variables */
+/*
+
+/* Pink Dominant
+
+:root {
+  --primary: #ff69b4;
+  --error: #9370db;
+  --success: #ffffff;
+  --text: #adb5bd;
+  --bg: #1a1a1a;
+}
+
+
+
+/* Purple Dominant 
+
+:root {
+  --primary: #9370db;
+  --error: #ff69b4;
+  --success: #ffffff;
+  --text: #adb5bd;
+  --bg: #0f0f13;
+  --bg-hover:#ff69b4;
+
+}
+
+/* True Blue
 :root {
   --primary: #3b82f6;
   --error: #ef4444;
   --success: #10b981;
   --text: #1f2937;
   --bg: #f9fafb;
+  --bg-hover:#ef4444;
+
+}
+
+  --text:#adb5bd;
+
+*/
+
+:root {
+  --primary: #9370db;
+  --error: #ff69b4;
+  --success: #ffffff;
+  --text: #7c8288;
+  --bg: #0f0f13;
+  --bg-hover:#ff69b4;
 }
 
 /* Base Styles */
@@ -75,7 +117,7 @@ h2 {
 }
 
 .auth-form > button[type="submit"]:hover {
-  background: #2563eb;
+  background: var(--bg-hover);
 }
 
 /* Links */
