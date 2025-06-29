@@ -213,6 +213,148 @@ src/adapters/databases/<adapter>/migrations/
 ```
 
 
+## 📖 Authentique UI Configuration
+
+**Authentique UI** is a fully optional, lightweight user interface layer that ships alongside the **Authentique authentication package**. It provides a clean, modular, and extensible frontend to support full authentication workflows out of the box — without requiring a JavaScript framework.
+
+---
+
+## ⚙️ UI Capabilities
+
+Authentique UI includes:
+
+* **User signup**
+  With support for multiple database adapters as configured in your **Authentique backend setup**:
+
+  * MySQL
+  * Supabase
+  * MongoDB
+  * SQLite
+
+* **Email-based account confirmation**
+  New users must confirm their email address before login is permitted.
+
+* **Secure email and password login**
+  Authentication is JWT-based and secured via **HttpOnly cookies**.
+  These tokens are **never accessible from frontend JavaScript** and are confined to backend-managed cookies.
+
+* **Email-based password recovery**
+  Users can request a password reset via email, with secure token-based confirmation.
+
+* **Automatic redirection to a prebuilt authentication dashboard template**
+  Upon login, users are automatically redirected to a prebuilt authentication dashboard template. This dashboard serves as a flexible foundation that you can easily customize to fit your application's unique requirements. By running database migrations with Authentique backends and extending the Authentique UI, you can quickly build a full-stack CRUD application with minimal effort. The solution is framework-agnostic but optimized for the Semantq JS framework, giving you maximum flexibility and speed in development.
+
+---
+
+## 🔒 Security Model
+
+Authentique UI makes all authentication API calls via **frontend proxy routes**, preventing the frontend from making direct cross-origin requests to the authentication backend.
+JWT tokens are stored in **HttpOnly cookies** set by the backend — these cookies are:
+
+* Not accessible via JavaScript
+* Automatically included in API requests to authenticated endpoints
+* Secure and domain-confined
+
+---
+
+## 📂 Configuring the Backend API Endpoint
+
+All Authentique UI scripts that communicate with the backend load a configuration object from:
+
+```
+authentiqueui/auth/js/config.js
+```
+
+This defines the environment and base backend API URLs dynamically based on the current host, or allows for manual environment selection.
+
+---
+
+## 📜 `config.js` Structure
+
+```js
+/**
+ * AppConfig
+ * 
+ * Application runtime configuration for Authentique UI.
+ * 
+ * ENV can either be set dynamically based on the window location
+ * or manually for testing/dev purposes by assigning a fixed value:
+ * 
+ * Example:
+ *   ENV: 'development'
+ *   ENV: 'production'
+ * 
+ * BASE_URLS can be customized to point to your backend's dev or production
+ * environment as needed.
+ */
+const AppConfig = {
+  // Automatically detect the environment, or set manually for testing
+  ENV: (typeof window !== 'undefined' && window.location.hostname.includes('localhost'))
+    ? 'development'
+    : 'production',
+
+  // Define your backend API base URLs for different environments
+  BASE_URLS: {
+    development: 'http://localhost:3000',
+    production: 'https://api.botaniqsa.com'
+  },
+
+  /**
+   * Dynamically returns the base API URL for the current environment
+   */
+  get BASE_URL() {
+    return this.BASE_URLS[this.ENV] || this.BASE_URLS.development;
+  }
+};
+
+export default AppConfig;
+```
+
+---
+
+## 📦 How Config Is Imported and Used
+
+Each Authentique UI module that requires access to backend API endpoints **imports `AppConfig` from the config file**.
+
+Example:
+
+```js
+import AppConfig from './config.js';
+```
+
+API paths are then constructed using `AppConfig.BASE_URL` like this:
+
+```js
+const PATHS = {
+  FORGOT_PASSWORD_API: `${AppConfig.BASE_URL}/api/forgot-password`, // Assuming backend is on 3000
+  LOGIN_PAGE: '/login' // Assuming your login page is at /login
+};
+```
+
+This ensures your frontend modules automatically target the correct API environment without needing to hardcode endpoint URLs.
+
+---
+
+## 📌 Important Notes:
+
+* The **config file must be located at:**
+  `authentiqueui/auth/js/config.js`
+* No staging environment is included by default.
+  The provided environments are:
+
+  * `development` (for localhost testing)
+  * `production` (for live deployment)
+
+If necessary, you can extend the `BASE_URLS` object for additional environments as required for your own project.
+
+---
+
+✅ This setup ensures your Authentique UI and backend remain cleanly decoupled, environment-aware, and highly secure.
+
+---
+
+Would you like me to draft a companion section explaining **how to add a new environment config (e.g. QA or test env)**, or detail **the proxy route pattern in the UI server** as well?
+
 
 
 
