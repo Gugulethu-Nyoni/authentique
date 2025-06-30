@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-// Ensure environment is loaded first
-//import '../config/env-loader.js';
+// Load environment variables
+// import '../config/env-loader.js';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -11,7 +11,7 @@ import fs from 'fs/promises';
 import databaseConfig from '../config/databases.js';
 import config from '../config/authentique.config.js';
 
-// Import your new MySQL adapter factory or getter
+// MySQL adapter factory
 import { getDatabaseAdapter } from '../src/adapters/databases/database-adapter.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -23,25 +23,23 @@ const colors = {
   highlight: chalk.magentaBright
 };
 
-// Parse command line args, default to 'run'
+// Parse command line args
 const args = process.argv.slice(2);
 const command = args[0] || 'run';
 const rollbackSteps = args[1] ? Number(args[1]) : 1;
 
 const mysqlConfig = databaseConfig.mysql;
 
-console.log(colors.info('MySQL config loaded at runtime:'), mysqlConfig);
+console.log(colors.info(`Active DB adapter: ${config.database.adapter}`));
 
-async function runMigrations() {
+// --- MYSQL MIGRATION HANDLERS ---
+
+async function runMysqlMigrations() {
   let db;
   try {
-    console.log(colors.info(`🏁 Starting ${colors.highlight(config.database.adapter)} migrations`));
+    console.log(colors.info(`🏁 Starting ${colors.highlight('MySQL')} migrations`));
 
-    if (config.database.adapter !== 'mysql') {
-      throw new Error(`Only MySQL migrations are currently supported. You requested: ${config.database.adapter}`);
-    }
-
-    db = await getDatabaseAdapter(config.database.adapter, mysqlConfig);
+    db = await getDatabaseAdapter('mysql', mysqlConfig);
     await db.connect();
     console.log(colors.info('DB Adapter instance:'), db);
 
@@ -91,7 +89,7 @@ async function runMigrations() {
       console.log(colors.success(`✅ Migration completed: ${file}`));
     }
 
-    console.log(colors.success('🎉 All migrations executed successfully.'));
+    console.log(colors.success('🎉 All MySQL migrations executed successfully.'));
   } catch (err) {
     console.log(colors.error(`💥 Migration error: ${err.message}`));
     process.exit(1);
@@ -100,16 +98,12 @@ async function runMigrations() {
   }
 }
 
-async function rollbackMigrations(steps) {
+async function rollbackMysqlMigrations(steps) {
   let db;
   try {
-    console.log(colors.info(`🏁 Rolling back ${steps} migration(s)`));
+    console.log(colors.info(`🏁 Rolling back ${steps} MySQL migration(s)`));
 
-    if (config.database.adapter !== 'mysql') {
-      throw new Error(`Only MySQL migrations are currently supported. You requested: ${config.database.adapter}`);
-    }
-
-    db = await getDatabaseAdapter(config.database.adapter, mysqlConfig);
+    db = await getDatabaseAdapter('mysql', mysqlConfig);
     await db.connect();
     console.log(colors.info('DB Adapter instance:'), db);
 
@@ -160,12 +154,26 @@ async function rollbackMigrations(steps) {
   }
 }
 
-if (command === 'run') {
-  await runMigrations();
-} else if (command === 'rollback') {
-  await rollbackMigrations(rollbackSteps);
+// --- MAIN ROUTER ---
+
+if (config.database.adapter === 'mysql') {
+  if (command === 'run') {
+    await runMysqlMigrations();
+  } else if (command === 'rollback') {
+    await rollbackMysqlMigrations(rollbackSteps);
+  } else {
+    console.error(colors.error(`Unknown command: ${command}`));
+    console.log(colors.info('Usage: authentique-migrate [run|rollback] [steps]'));
+    process.exit(1);
+  }
+} else if (config.database.adapter === 'supabase') {
+  console.log(colors.info(`✨ Supabase projects use the Supabase CLI for migrations.`));
+  console.log(colors.info(`➡️ To run migrations:`));
+  console.log(colors.info(`    supabase db push`));
+  console.log(colors.info(`➡️ To reset the local database:`));
+  console.log(colors.info(`    supabase db reset`));
+  process.exit(0);
 } else {
-  console.error(colors.error(`Unknown command: ${command}`));
-  console.log(colors.info('Usage: authentique-migrate [run|rollback] [steps]'));
+  console.error(colors.error(`Unsupported database adapter: ${config.database.adapter}`));
   process.exit(1);
 }
