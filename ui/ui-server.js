@@ -119,6 +119,11 @@ app.get('/confirm-email', (req, res) => {
 });
 
 
+app.get('/reset-password', (req, res) => {
+  res.sendFile(path.join(__dirname, 'auth', 'reset-password.html'));
+});
+
+
 // General 404 fallback
 app.use((req, res) => {
   console.log('➡️ Route not found - redirecting to login');
