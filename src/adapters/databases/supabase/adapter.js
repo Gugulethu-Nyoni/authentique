@@ -1,5 +1,4 @@
 // src/adapters/databases/supabase/adapter.js
-// src/adapters/databases/supabase/adapter.js
 import { createClient } from '@supabase/supabase-js';
 import { DatabaseAdapter } from '../database-adapter.js';
 
