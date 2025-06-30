@@ -1,4 +1,4 @@
-import { getMySQLAdapter } from '../adapters/databases/mysql/index.js';
+import { getMySQLAdapter } from '../../adapters/databases/mysql/index.js';
 
 const db = getMySQLAdapter();
 
