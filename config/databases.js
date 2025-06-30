@@ -9,6 +9,14 @@ const mysqlConfig = {
   poolLimit: process.env.DB_MYSQL_POOL_LIMIT,
 };
 
+const supabaseConfig = {
+  url: process.env.SUPABASE_URL,
+  anonKey: process.env.SUPABASE_ANON_KEY,
+  serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+  dbConnectionString: process.env.SUPABASE_DB_CONNECTION_STRING,
+};
+
 export default {
   mysql: mysqlConfig,
+  supabase: supabaseConfig,
 };
