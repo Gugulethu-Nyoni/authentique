@@ -1,3 +1,4 @@
+//src/models/supabase/user.js
 import { getSupabaseAdapter } from '../../adapters/databases/supabase/index.js';
 
 const db = getSupabaseAdapter();  // your singleton Supabase adapter instance

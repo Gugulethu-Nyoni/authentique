@@ -8,7 +8,8 @@ export function getSupabaseAdapter() {
   if (!instance) {
     instance = new SupabaseAdapter({
       url: config.supabase.url,
-      key: config.supabase.anonKey,
+      anonKey: config.supabase.anonKey,
+      serviceRoleKey: config.supabase.serviceRoleKey
     });
   }
   return instance;
