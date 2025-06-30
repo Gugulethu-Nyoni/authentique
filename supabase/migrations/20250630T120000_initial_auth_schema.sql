@@ -7,10 +7,10 @@ CREATE TABLE IF NOT EXISTS public.users (
   surname VARCHAR(100),
   is_verified BOOLEAN DEFAULT FALSE,
   verification_token VARCHAR(255),
-  verification_token_expires_at TIMESTAMP,
+  verification_token_expires_at TIMESTAMPTZ,
   reset_token VARCHAR(255),
-  reset_token_expires_at TIMESTAMP,
-  last_login_at TIMESTAMP,
+  reset_token_expires_at TIMESTAMPTZ,
+  last_login_at TIMESTAMPTZ,
   failed_login_attempts INTEGER DEFAULT 0,
   status TEXT DEFAULT 'active' CHECK (status IN ('active', 'locked', 'suspended')),
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -21,6 +21,22 @@ CREATE TABLE IF NOT EXISTS public.users (
 CREATE INDEX IF NOT EXISTS idx_users_email ON public.users(email);
 CREATE INDEX IF NOT EXISTS idx_users_verification_token ON public.users(verification_token);
 CREATE INDEX IF NOT EXISTS idx_users_reset_token ON public.users(reset_token);
+
+-- Optional: auto-update updated_at timestamp on row update
+/*
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_users_updated_at
+BEFORE UPDATE ON public.users
+FOR EACH ROW
+EXECUTE PROCEDURE set_updated_at();
+*/
 
 -- Create auth_logs table
 CREATE TABLE IF NOT EXISTS public.auth_logs (
