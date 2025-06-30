@@ -87,7 +87,7 @@ export default {
 
 - config/authentique.config.js ✅
 
-✔️ Remember to uodate up your 'config/databases.js' and 'config/auth.js' modules accordingly.
+✔️ Remember to update up your 'config/databases.js' and 'config/auth.js' modules accordingly.
 `);
 }
 
