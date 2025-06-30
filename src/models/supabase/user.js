@@ -5,10 +5,11 @@ const db = getSupabaseAdapter();  // your singleton Supabase adapter instance
 
 // Helper to get single row or null
 async function getSingleRow(query) {
-  const { data, error } = await query.limit(1).single();
+  const { data, error } = await query.limit(1).maybeSingle();
   if (error) throw error;
   return data;
 }
+
 
 // Find user by email
 export const findUserByEmail = async (email) => {
