@@ -195,12 +195,15 @@ export async function down(pool) {
 
 ## 📦 Database Migration Commands
 
-| Command                                     | Description                                                         | Example                                |
-| :------------------------------------------ | :------------------------------------------------------------------ | :------------------------------------- |
-| `npx authentique-migrate`                   | Runs all pending migrations not yet recorded in the migrations log. | `npx authentique-migrate`              |
-| `npx authentique-migrate rollback`          | Rolls back the latest applied migration.                            | `npx authentique-migrate rollback`     |
-| `npx authentique-migrate rollback <number>` | Rolls back the specified number of latest applied migrations.       | `npx authentique-migrate rollback 2`   |
-| `npx authentique-migrate rollback 999`      | Rolls back **all** applied migrations (safe upper limit).           | `npx authentique-migrate rollback 999` |
+| Command                          | Description                                                         | Example                        |
+|:---------------------------------|:--------------------------------------------------------------------|:-------------------------------|
+| `npm run init`                   | Runs the interactive configuration wizard to set up project config. | `npm run init`                  |
+| `npm run migrate`                | Runs all pending database migrations not yet recorded in the migrations log. | `npm run migrate`               |
+| `npm run migrate:rollback`       | Rolls back the latest applied migration (1 step).                    | `npm run migrate:rollback`      |
+| `npm run migrate:rollback <N>`   | Rolls back the specified number of latest applied migrations.        | `npm run migrate:rollback 2`    |
+| `npm run migrate:rollback 999`   | Rolls back **all** applied migrations (safe upper limit).             | `npm run migrate:rollback 999`  |
+| `npm run migrate:refresh`        | Rolls back all migrations and re-applies them from scratch.           | `npm run migrate:refresh`       |
+| `npm run setup`                  | Runs init, migrates the database, and starts both API and UI servers concurrently. | `npm run setup`                 |
 
 ---
 
