@@ -6,6 +6,11 @@ import { fileURLToPath } from 'url';
 import fetch from 'node-fetch';
 import 'dotenv/config';
 
+const API_BASE_URL = process.env.API_BASE_URL;
+if (!API_BASE_URL) {
+  console.error('❌ Missing API_BASE_URL in environment!');
+  process.exit(1);
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,7 +68,7 @@ const proxyRequest = async (req, res, options) => {
 // Public API proxies
 app.post(['/api/login', '/api/signup', '/api/logout'], async (req, res) => {
   await proxyRequest(req, res, {
-    url: `http://localhost:3000${req.originalUrl}`,
+    url: `${API_BASE_URL}${req.originalUrl}`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(req.body)
@@ -78,7 +83,7 @@ app.get('/api/verify-token', async (req, res) => {
   }
 
   await proxyRequest(req, res, {
-    url: 'http://localhost:3000/api/verify-token',
+    url: `${API_BASE_URL}/api/verify-token`,
     headers: {
       'Cookie': `auth_token=${token}`,
       'Content-Type': 'application/json'
@@ -94,7 +99,7 @@ app.get('/api/validate-session', async (req, res) => {
   }
 
   await proxyRequest(req, res, {
-    url: 'http://localhost:3000/api/validate-session',
+    url: `${API_BASE_URL}/api/validate-session`,
     headers: {
       'Cookie': `auth_token=${token}`,
       'Content-Type': 'application/json'
@@ -105,7 +110,7 @@ app.get('/api/validate-session', async (req, res) => {
 // Protected API proxy routes
 app.use('/api', createGuard(), async (req, res) => {
   await proxyRequest(req, res, {
-    url: `http://localhost:3000${req.originalUrl}`,
+    url: `${API_BASE_URL}${req.originalUrl}`,
     method: req.method,
     headers: {
       ...req.headers,
@@ -120,11 +125,9 @@ app.get('/confirm-email', (req, res) => {
   res.sendFile(path.join(__dirname, 'auth', 'confirm.html'));
 });
 
-
 app.get('/reset-password', (req, res) => {
   res.sendFile(path.join(__dirname, 'auth', 'reset-password.html'));
 });
-
 
 // General 404 fallback
 app.use((req, res) => {
@@ -140,6 +143,6 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(3001, () => {
-  console.log('✅ UI Server running at http://localhost:3001');
-  console.log('🔐 Auth API proxy configured for http://localhost:3000');
+  console.log(`✅ UI Server running at http://localhost:3001`);
+  console.log(`🔐 Auth API proxy configured for ${API_BASE_URL}`);
 });
