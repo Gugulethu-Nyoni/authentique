@@ -20,19 +20,23 @@ export const findUserByEmail = async (email) => {
 
 // Create new user
 export const createUser = async (user) => {
-  const { data, error } = await db.client.from('users').insert([{
-    name: user.name || null,
-    email: user.email || null,
-    password_hash: user.password_hash || null,
-    verification_token: user.verification_token || null,
-    verification_token_expires_at: user.verification_token_expires_at || null
-  }]);
+  const { data, error } = await db.client.from('users')
+    .insert([{
+      name: user.name || null,
+      email: user.email || null,
+      password_hash: user.password_hash || null,
+      verification_token: user.verification_token || null,
+      verification_token_expires_at: user.verification_token_expires_at || null
+    }])
+    .select('id');  // ✅ Important: tell Supabase to return the inserted id
 
   if (error) throw error;
+  if (!data || !data[0]) throw new Error('User creation failed, no record returned.');
 
   // Return the inserted user's id
   return data[0].id;
 };
+
 
 // Find user by verification token
 export const findUserByVerificationToken = async (token) => {
