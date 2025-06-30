@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 console.log('Current NODE_ENV:', process.env.NODE_ENV);
-console.log('Using domain:', process.env[`${process.env.NODE_ENV === 'development' ? 'DEV' : 'LIVE'}_DOMAIN`]);
+//console.log('Using domain:', process.env[`${process.env.NODE_ENV === 'development' ? 'DEV' : 'LIVE'}_DOMAIN`]);
 
 export const getCookieOptions = () => ({
   httpOnly: true,
@@ -17,6 +17,6 @@ export const getCookieOptions = () => ({
   }),
 });
 
-console.log(getCookieOptions());
+//console.log(getCookieOptions());
 
 
