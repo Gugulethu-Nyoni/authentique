@@ -38,6 +38,13 @@ export const signupHandler = async (req, res) => {
 // Confirm Email
 export const confirmEmailHandler = async (req, res) => {
   const { token } = req.body;
+
+console.log('Received token:', token);
+const user = await findUserByVerificationToken(token);
+console.log('User found:', user);
+
+
+
   if (!token) return errorResponse(res, 'Verification token missing.', 400);
 
   try {

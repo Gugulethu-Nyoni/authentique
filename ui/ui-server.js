@@ -114,6 +114,11 @@ app.use('/api', createGuard(), async (req, res) => {
   });
 });
 
+app.get('/confirm-email', (req, res) => {
+  res.sendFile(path.join(__dirname, 'auth', 'confirm.html'));
+});
+
+
 // General 404 fallback
 app.use((req, res) => {
   console.log('➡️ Route not found - redirecting to login');
