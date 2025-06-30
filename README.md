@@ -55,22 +55,56 @@ Example:
 Ensure your `.env` file contains required variables:
 
 ```ini
-# Database (MySQL example)
+# === Core ===
+BRAND_NAME=ExampleBrand
+BRAND_SUPPORT_EMAIL=support@example.com
+NODE_ENV=development
+PORT=3000
+BASE_URL=http://localhost:3000
+UI_BASE_URL=http://localhost:3001
+
+# === Database ===
+# ===== MySQL/MariaDB =====
 DB_ADAPTER=mysql
 DB_MYSQL_HOST=localhost
 DB_MYSQL_PORT=3306
 DB_MYSQL_USER=root
-DB_MYSQL_PASSWORD=yourpassword
-DB_MYSQL_NAME=auth_db
+DB_MYSQL_PASSWORD=mypassword
+DB_MYSQL_NAME=auth
+DB_MYSQL_POOL_LIMIT=10
 
-# Authentication
-JWT_SECRET=your_secure_secret_here
+# === Auth ===
+JWT_SECRET=your_long_jwt_secret_here
 JWT_ACCESS_EXPIRY=15m
 
-# Email (Resend example)
-EMAIL_DRIVER=resend
-RESEND_API_KEY=re_123456789
-EMAIL_FROM=noreply@yourdomain.com
+# === Email ===
+EMAIL_DRIVER=resend  # resend|mailgun|smtp
+EMAIL_FROM=noreply@emailer.approveddomain.com
+EMAIL_FROM_NAME=ExampleBrand
+
+# --- Resend ---
+RESEND_API_KEY=re_xxx
+
+# --- Mailgun ---
+# MAILGUN_API_KEY=key-xxx
+# MAILGUN_DOMAIN=mg.yourdomain.com
+
+# --- SMTP ---
+# SMTP_HOST=smtp.example.com
+# SMTP_PORT=587
+# SMTP_USER=user
+# SMTP_PASS=pass
+
+# --- Supabase ---
+# SUPABASE_URL=https://xxx.supabase.co
+# SUPABASE_KEY=anon_key
+
+# --- SQLite ---
+# SQLITE_PATH=./data/db.sqlite
+
+# --- MongoDB ---
+# MONGO_URI=mongodb://user:pass@host:27017/dbname
+
 ```
 
 ---
