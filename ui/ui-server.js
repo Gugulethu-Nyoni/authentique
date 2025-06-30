@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import fetch from 'node-fetch';
 import 'dotenv/config';
 
-const API_BASE_URL = process.env.API_BASE_URL;
+const API_BASE_URL = process.env.BASE_URL;
 if (!API_BASE_URL) {
   console.error('❌ Missing API_BASE_URL in environment!');
   process.exit(1);
@@ -19,7 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-console.log('📦 Serving UI files from project root:', __dirname);
+//console.log('📦 Serving UI files from project root:', __dirname);
 
 // ✅ Static asset routes (place these early!)
 app.use('/auth', express.static(path.join(__dirname, 'auth')));
