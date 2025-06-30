@@ -27,7 +27,7 @@ const AppConfig = {
 
   BASE_URLS: {
     development: 'http://localhost:3000',
-    production: 'https://api.botaniqsa.com'
+    production: 'https://example.com'
   },
 
   DASHBOARD: '/dashboard/index.html',
