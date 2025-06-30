@@ -1,56 +1,37 @@
 /* Core Variables */
-/*
-
-/* Pink Dominant
-
+/* Pink Dominant */
 :root {
   --primary: #ff69b4;
   --error: #9370db;
   --success: #ffffff;
   --text: #adb5bd;
   --bg: #1a1a1a;
-  --bg-hover:#9370db;
-
+  --bg-hover: #9370db;
 }
 
-
-
-/* Purple Dominant 
-
+/* Purple Dominant */
+/*
 :root {
   --primary: #9370db;
   --error: #ff69b4;
   --success: #ffffff;
   --text: #adb5bd;
   --bg: #0f0f13;
-  --bg-hover:#ff69b4;
-
+  --bg-hover: #ff69b4;
 }
+*/
 
-/* True Blue
+/* True Blue */
+/*
 :root {
   --primary: #3b82f6;
   --error: #ef4444;
   --success: #10b981;
   --text: #1f2937;
   --bg: #f9fafb;
-  --bg-hover:#ef4444;
-
+  --bg-hover: #ef4444;
 }
-
-  --text:#adb5bd;
-
 */
-
-:root {
-  --primary: #ff69b4;
-  --error: #9370db;
-  --success: #ffffff;
-  --text: #adb5bd;
-  --bg: #1a1a1a;
-  --bg-hover:#9370db;
-
-}
 
 /* Base Styles */
 body {
@@ -82,6 +63,7 @@ h2 {
   margin-top: 0;
   margin-bottom: 1.5rem;
   text-align: center;
+  color: var(--text);
 }
 
 /* Forms */
@@ -100,9 +82,11 @@ h2 {
 .auth-form input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--text);
   border-radius: 0.375rem;
   font-size: 1rem;
+  background-color: var(--bg);
+  color: var(--text);
 }
 
 /* Form submit buttons only */
@@ -153,16 +137,16 @@ h2 {
 
 /* Success State */
 #auth-status.success {
-  background-color: #f0fdf4;
-  color: var(--success, #16a34a);
-  border-color: #bbf7d0;
+  background-color: var(--bg);
+  color: var(--success);
+  border-color: var(--success);
 }
 
 /* Error State */
 #auth-status.error {
-  background-color: #fef2f2; 
-  color: var(--error, #dc2626);
-  border-color: #fecaca;
+  background-color: var(--bg); 
+  color: var(--error);
+  border-color: var(--error);
 }
 
 #auth-status:hover {
@@ -171,7 +155,7 @@ h2 {
 }
 
 #auth-status:focus {
-  outline: 2px solid #93c5fd;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -181,7 +165,7 @@ h2 {
   height: 16px;
   border: 2px solid rgba(255,255,255,0.3);
   border-radius: 50%;
-  border-top-color: #fff;
+  border-top-color: var(--text);
   animation: spin 1s ease-in-out infinite;
 }
 
@@ -216,7 +200,7 @@ h2 {
   padding: 0;
   margin: 0;
   cursor: pointer;
-  color: #555;
+  color: var(--text);
   line-height: 1;
   width: 20px;
   height: 20px;
@@ -231,7 +215,7 @@ h2 {
 }
 
 .password-toggle:hover {
-  color: #000;
+  color: var(--primary);
 }
 
 .password-toggle:focus {
@@ -247,17 +231,16 @@ h2 {
 }
 
 .auth-feedback.success {
-  background: #e6ffed;
-  border-color: #34d399;
-  color: #065f46;
+  background: var(--bg);
+  border-color: var(--success);
+  color: var(--success);
 }
 
 .auth-feedback.error {
-  background: #fee2e2;
-  border-color: #f87171;
-  color: #991b1b;
+  background: var(--bg);
+  border-color: var(--error);
+  color: var(--error);
 }
-
 
 .form-alert {
   padding: 1rem;
@@ -270,14 +253,13 @@ h2 {
 }
 
 .form-alert.success {
-  background-color: #d1fae5; /* lighter green */
-  color: #065f46; /* dark green */
-  border-color: #34d399;
+  background-color: var(--bg);
+  color: var(--success);
+  border-color: var(--success);
 }
 
 .form-alert.error {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border-color: #f87171;
+  background-color: var(--bg);
+  color: var(--error);
+  border-color: var(--error);
 }
-
