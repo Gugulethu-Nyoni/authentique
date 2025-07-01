@@ -506,6 +506,60 @@ Sure — here’s a clean, refined, and clear markdown section for your README t
 
 ---
 
+## 🎛️ UI Configuration: Connecting to the Backend API
+
+The **optional built-in UI** ui-server.js provided with Authentique requires a correctly configured API endpoint to communicate with the backend authentication service.
+
+By default, the UI is served from within the `authentique/` directory and reads the target backend API URL from the main `.env` file in the project root:
+
+```javascript
+import fetch from 'node-fetch';
+import 'dotenv/config';
+
+const API_BASE_URL = process.env.API_BASE_URL;
+if (!API_BASE_URL) {
+  console.error('❌ Missing API_BASE_URL in environment!');
+  process.exit(1);
+}
+```
+
+---
+
+### ⚙️ How This Works:
+
+* The **UI server** (located in: `authentique/ui/ui-server.js`) reads the `API_BASE_URL` environment variable at runtime.
+* This value tells the UI server where to proxy frontend authentication requests (login, signup, token validation, etc.) to the Authentique backend.
+
+---
+
+### 📌 Important:
+
+* **You must ensure that your `.env` file has a valid `API_BASE_URL` defined** if you're using the provided UI.
+* This is especially critical if you move the UI outside of the `authentique/` directory or deploy the frontend separately from the backend.
+
+---
+
+### 📝 Example `.env`:
+
+```
+API_BASE_URL=http://localhost:3000
+```
+
+---
+
+### 🚨 Custom Project Setups:
+
+If you integrate Authentique into a custom project structure:
+
+* Make sure to adjust the environment variable setup accordingly.
+* Alternatively, modify the `API_BASE_URL` retrieval logic in your custom UI server or configuration files to match your project’s conventions.
+
+**Key principle:**
+
+> *The UI server must have a way to resolve and use the correct backend API endpoint at runtime for Authentique to function properly.*
+
+
+
 ### **Authentique UI Dashboard**
 
 The default URL for the Authentique dashboard is set via the `DASHBOARD` variable in the `config.js` file:
