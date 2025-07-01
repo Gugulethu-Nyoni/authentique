@@ -1,6 +1,6 @@
 {
   "name": "authentique",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Framework-agnostic authentication stack with adapters for MySQL, Supabase, Mongodb and Sqlite and social providers",
   "type": "module",
   "scripts": {
