@@ -137,6 +137,82 @@ src/adapters/databases/mysql/migrations/
 
 Each migration file must export an `up(pool)` function to apply changes, and optionally a `down(pool)` function to rollback.
 
+
+---
+
+## 📦 Migration Repositories
+
+Authentique provides **starter migration files** for supported databases to help you quickly set up the necessary tables for authentication functionality.
+
+These starter migrations are located under:
+
+```
+authentique/lib/migration_repos/
+```
+
+### 📂 Available Migration Repositories:
+
+* `mysql/` — SQL migrations for MySQL/MariaDB
+* `supabase/` — SQL migration files for Supabase (PostgreSQL)
+
+---
+
+## 📑 How to Use
+
+After installing Authentique, you can optionally copy these migrations into your project’s own migration directories to initialize your database schema.
+
+### 🐬 MySQL:
+
+* **Source:**
+  `authentique/lib/migration_repos/mysql/`
+
+* **Destination:**
+  `authentique/src/adapters/mysql/migrations/`
+
+**Example:**
+
+```bash
+cp authentique/lib/migration_repos/mysql/* authentique/src/adapters/mysql/migrations/
+```
+or you can copy these manually 
+---
+
+### 🐘 Supabase:
+
+* **Source:**
+  `authentique/lib/migration_repos/supabase/`
+
+* **Destination:**
+  `supabase/migrations/` *(inside your Supabase CLI project directory)*
+
+**Example:**
+
+```bash
+cp authentique/lib/migration_repos/supabase/* supabase/migrations/
+```
+
+---
+
+## ⚠️ Important Notice
+
+> **Do not mix MySQL migrations with Supabase/PostgreSQL projects.**
+> The **file formats, naming conventions, and SQL dialect** differ between MySQL and Supabase.
+
+* **MySQL**: Uses `.sql` files with MySQL-specific syntax.
+* **Supabase**: Uses timestamped SQL files compatible with PostgreSQL migrations run via the Supabase CLI.
+
+Ensure you copy the correct migration files into the appropriate project directories.
+
+---
+
+## 📖 Additional Notes
+
+You’re free to modify, extend, or replace these starter migrations to suit your project’s needs. These are provided as a baseline for setting up the required authentication-related tables such as:
+
+* `users`
+* `sessions`
+* `oauth_tokens` (for OAuth strategies)
+
 ---
 
 ### 📜 Running Migrations
